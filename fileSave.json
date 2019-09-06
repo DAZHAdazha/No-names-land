@@ -1,0 +1,51 @@
+{
+    "plot": 1,
+    "money": 0,
+    "characters": [
+    {
+         "name": "ÎÞÃû",
+        "attack": 207,
+        "defence": 84,
+        "health": 745,
+        "magic": 365,
+        "critical": 0,
+        "speed": 35,
+        "luck": 4,
+        "insight": 1,
+        "level": 1,
+        "exp": 0,
+        "need_exp": 10,
+        "grow_attack": 4,
+        "grow_defence": 3,
+        "grow_health": 9,
+        "grow_magic": 11,
+        "grow_critical": 0,
+        "grow_speed": 0,
+        "grow_luck": 0,
+        "grow_insight": 0
+    },
+    {
+		"name": "Shining",
+        "attack": 191,
+        "defence": 63,
+        "health": 854,
+        "magic": 396,
+        "critical": 0,
+        "speed": 35,
+        "luck": 3,
+        "insight": 1,
+        "level": 1,
+        "exp": 0,
+        "need_exp": 10,
+        "grow_attack": 2,
+        "grow_defence": 1,
+        "grow_health": 7,
+        "grow_magic": 11,
+        "grow_critical": 0,
+        "grow_speed": 0,
+        "grow_luck": 0,
+        "grow_insight": 0
+    }
+],
+    "drug": []
+}
