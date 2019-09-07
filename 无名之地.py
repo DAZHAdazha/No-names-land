@@ -525,7 +525,7 @@ while(True):
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """bag"""
         draw_window()
-        while ():
+        while (True):
             if close_window() == 1:
                 break
     if (width - 180 < mouse_pos[0] < width - 120 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
