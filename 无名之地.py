@@ -237,17 +237,17 @@ def load_file():
             characters = []
             drug = []
             dic = {'plot': 0, 'money': 0, 'characters': characters, 'drug': drug}
-            dic = json.dumps(dic, indent=4)
+            dic = json.dumps(dic, indent=4, ensure_ascii=False)
             f.write(dic)
-    with open('fileSave.json', 'r') as file_object:
+    with open('fileSave.json', 'r', encoding='utf-8') as file_object:
         contents = json.load(file_object)
     return contents
 
 
 def down_file(contents):
     """保存存档"""
-    contents = json.dumps(contents, indent=4)
-    with open('fileSave.json', 'w') as file_object:
+    contents = json.dumps(contents, indent=4, ensure_ascii=False)
+    with open('fileSave.json', 'w', encoding='utf-8') as file_object:
         """覆盖原存档"""
         file_object.write(contents)
 
