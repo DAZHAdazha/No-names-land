@@ -33,6 +33,66 @@ achievement_image = achievement_image.move(width - 180, height - 60)
 pygame.display.set_caption("无名之地")
 
 
+class Drug:
+
+    def __init__(self, name):
+        self.name = name
+
+    def drug_capacity(self, size=5, num=0):
+        self.size = size
+        self.num = num
+
+    def drug_effect(self, attack, defence, health, speed, magic):
+        self.attack = attack * self.size
+        self.defence = defence * self.size
+        self.health = health * self.size
+        self.speed = speed * self.size
+        self.magic = magic * self.size
+
+    def change_drug_dic(self, drug_list):
+        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health,
+               'magic': self.magic,
+               'speed': self.speed, 'num': self.num}
+        drug_list.append(dic)
+
+    def alter_drug(self, contents):
+        """alter a drug in contents"""
+        for i in contents['drug']:
+            if i['name'] == self.name:
+                i['num'] = self.num
+
+    def create_drug(self, attack, defence, health, speed, magic, num, size, drug_list):
+        self.drug_capacity(size, num)
+        self.drug_effect(attack, defence, health, speed, magic)
+        self.change_drug_dic(drug_list)
+
+
+def use_drug(drug, character):
+    character.cur_ability(drug.attack, drug.defence, drug.health, drug.magic, drug.speed)
+    drug.num -= 1
+
+
+def get_drug(drug, num=1):
+    drug.num += num
+
+
+def load_drug(contents, drug_list):
+    for i in contents['drug']:
+        dr = Drug(i['name'])
+        dr.health = i['health']
+        dr.speed = i['speed']
+        dr.magic = i['magic']
+        dr.defence = i['defence']
+        dr.attack = i['attack']
+        dr.num = i['num']
+        drug_list.append(dr)
+
+
+def down_drug(contents, drug_list):
+    for j in drug_list:
+        j.alter_drug(contents)
+
+
 class Character:
 
     def __init__(self, name):
@@ -61,7 +121,7 @@ class Character:
         self.luck = luck
         self.insight = insight
 
-    def growth(self):
+    def growth (self):
         self.attack += self.grow_attack
         self.defence += self.grow_defence
         self.health += self.grow_health
@@ -71,24 +131,54 @@ class Character:
         self.luck += self.grow_luck
         self.insight += self.grow_insight
 
+    def set_cur_ability(self):
+        """set cur_ability"""
+        self.cur_attack = self.attack
+        self.cur_defence = self.defence
+        self.cur_health = self.health
+        self.cur_speed = self.speed
+        self.cur_magic = self.magic
+
+    def change_cur_ability(self, attack, defence, health, speed, magic):
+        """change cur_ability"""
+        self.cur_attack = self.cur_attack + attack
+        if self.cur_attack < 0:
+            self.cur_attack = 0
+        self.cur_defence = self.cur_defence + defence
+        if self.cur_defence < 0:
+            self.cur_defence = 0
+        self.cur_health = self.cur_health + health
+        if self.cur_health < 0:
+            self.cur_health = 0
+        elif self.cur_health > self.health:
+            self.cur_health = self.health
+        self.cur_magic = self.cur_magic + magic
+        if self.cur_magic < 0:
+            self.cur_magic = 0
+        elif self.cur_magic > self.magic:
+            self.cur_magic = self.magic
+        self.cur_speed = self.cur_speed + speed
+        if self.cur_speed < 0:
+            self.speed = 0
+
     def up_level(self, remainder):
         self.level += 1
         self.need_exp *= 1.5
         self.exp = remainder
         self.growth()
 
-    def change_character_dic(self, contents):
-        """add a character to contents"""
+    def change_character_dic(self, characters_list):
+        """add a character to characters_list"""
         dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
                'critical': self.critical, 'speed': self.speed, 'luck': self.luck, 'insight': self.insight, 'level': self.level,
                'exp': self.exp, 'need_exp':self.need_exp, 'grow_attack': self.grow_attack, 'grow_defence': self.grow_defence,
                'grow_health': self.grow_health, 'grow_magic': self.grow_magic, 'grow_critical': self.grow_critical,
                'grow_speed': self.grow_speed, 'grow_luck': self.grow_luck, 'grow_insight': self.grow_insight}
-        contents['characters'].append(dic)
+        characters_list.append(dic)
 
     def alter_character_ability(self, contents):
         """alter a character in contents"""
-        for i in contents['characters']:
+        for i in contents:
             if i['name'] == self.name:
                 i['attack'] = self.attack
                 i['defence'] = self.defence
@@ -123,17 +213,21 @@ class Character:
             self.up_level(remainder)
 
 
-def load_character(contents, characters_list):
+def load_characters(contents, characters_list):
     for i in contents['characters']:
         ch = Character(i['name'])
-        ch.set_ability(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'],
-                       i['insight'])
-        ch.set_growth_ability(i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'],
-                              i['grow_critical'], i['grow_speed'], i['grow_luck'], i['grow_insight'])
+        ch.set_ability(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'], i['insight'])
+        ch.set_growth_ability(i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'], i['grow_critical'],
+                              i['grow_speed'], i['grow_luck'], i['grow_insight'])
         ch.exp = i['exp']
         ch.need_exp = i['need_exp']
         ch.level = i['level']
         characters_list.append(ch)
+
+
+def down_characters(contents, characters_list):
+    for i in characters_list:
+        i.alter_character_ability(contents)
 
 
 def load_file():
@@ -143,17 +237,17 @@ def load_file():
             characters = []
             drug = []
             dic = {'plot': 0, 'money': 0, 'characters': characters, 'drug': drug}
-            dic = json.dumps(dic, indent=4)
+            dic = json.dumps(dic, indent=4, ensure_ascii=False)
             f.write(dic)
-    with open('fileSave.json', 'r') as file_object:
+    with open('fileSave.json', 'r', encoding='utf-8') as file_object:
         contents = json.load(file_object)
     return contents
 
 
 def down_file(contents):
     """保存存档"""
-    contents = json.dumps(contents, indent=4)
-    with open('fileSave.json', 'w') as file_object:
+    contents = json.dumps(contents, indent=4, ensure_ascii=False)
+    with open('fileSave.json', 'w', encoding='utf-8') as file_object:
         """覆盖原存档"""
         file_object.write(contents)
 
@@ -167,11 +261,13 @@ def show_lines(lines, t):
         pygame.display.update()  # watch out its position
         time.sleep(t)
 
+
 def show_words(words, coord):
     texts = font.render(words, True, WHITE)
     text = texts.get_rect()
     text.center = (coord[0], coord[1])
     screen.blit(texts, text)
+
 
 def is_new(contents):
     new = contents["plot"]
@@ -189,10 +285,13 @@ def is_new(contents):
 content = load_file()
 is_new(content)
 character_list = []
-load_character(content, character_list)
+drug_list = []
+load_characters(content, character_list)
+load_drug(content, drug_list)
 map_choice = [20, height - 20]
 map_x_velocity = 0
 map_y_velocity = 0
+
 
 def draw_window():
     pygame.draw.rect(screen, WHITE, (100, 100, width - 200, height - 200), 5)
@@ -202,6 +301,7 @@ def draw_window():
     pygame.draw.line(screen, RED, (width - 105, 105), (width - 125, 125), 5)
     pygame.display.update()
     fclock.tick(fps)
+
 
 def close_window():
     mouse_pos = pygame.mouse.get_pos()
@@ -273,4 +373,3 @@ while(True):
     screen.blit(achievement_images, achievement_image)
     pygame.display.update()
     fclock.tick(fps)
-
