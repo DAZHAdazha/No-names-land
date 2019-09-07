@@ -3,7 +3,7 @@ import time
 import sys
 import json
 import os
-
+import re
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -167,11 +167,16 @@ def show_lines(lines, t):
         pygame.display.update()  # watch out its position
         time.sleep(t)
 
+
 def show_words(words, coord):
     texts = font.render(words, True, WHITE)
     text = texts.get_rect()
     text.center = (coord[0], coord[1])
     screen.blit(texts, text)
+
+
+def show_attr(character, coord):
+    show_words('攻击' + character.attack, coord)
 
 def is_new(contents):
     new = contents["plot"]
