@@ -22,7 +22,8 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "grow_insight": 0
+            "grow_insight": 0,
+            "position": []
         },
         {
             "name": "Shining",
@@ -44,7 +45,31 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "grow_insight": 0
+            "grow_insight": 0,
+            "position": []
+        },
+        {
+            "name": "Swire",
+            "attack": 9,
+            "defence": 8,
+            "health": 91,
+            "magic": 80,
+            "critical": 0,
+            "speed": 4,
+            "luck": 2,
+            "insight": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 3,
+            "grow_defence": 3,
+            "grow_health": 11,
+            "grow_magic": 17,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "grow_insight": 0,
+            "position": []
         }
     ],
     "drug": [
@@ -101,6 +126,74 @@
             "magic": 0,
             "speed": 0,
             "num": 0
+        }
+    ],
+    "props": [
+        {
+            "name": "暴风大剑",
+            "attack": 3,
+            "defence": 0,
+            "health": 0,
+            "magic": 0,
+            "critical": 1,
+            "speed": 0,
+            "luck": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 1,
+            "grow_defence": 0,
+            "grow_health": 0,
+            "grow_magic": 0,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "num": 0,
+            "pos": 1
+        },
+        {
+            "name": "破晓之弓",
+            "attack": 6,
+            "defence": 0,
+            "health": 0,
+            "magic": 0,
+            "critical": 0,
+            "speed": 2,
+            "luck": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 1,
+            "grow_defence": 0,
+            "grow_health": 0,
+            "grow_magic": 0,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "num": 0,
+            "pos": 1
+        },
+        {
+            "name": "基利克斯的眼珠",
+            "attack": 1,
+            "defence": 1,
+            "health": 20,
+            "magic": 20,
+            "critical": 5,
+            "speed": 2,
+            "luck": -1,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 1,
+            "grow_defence": 1,
+            "grow_health": 0,
+            "grow_magic": 0,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "num": 0,
+            "pos": 5
         }
     ]
 }
