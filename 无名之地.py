@@ -33,6 +33,63 @@ achievement_image = achievement_image.move(width - 180, height - 60)
 pygame.display.set_caption("无名之地")
 
 
+class Material:
+
+    def __init__(self, name):
+        self.name = name
+        self.num = 0
+
+    def set_material_ability(self, attack, defence, health, magic, critical, speed, luck):
+        self.attack = attack
+        self.defence = defence
+        self.health = health
+        self.magic = magic
+        self.critical = critical
+        self.speed = speed
+        self.luck = luck
+
+    def add_material_list(self, materials_list):
+        """add a material to materials_list"""
+        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
+               'critical': self.critical, 'speed': self.speed, 'luck': self.luck, 'num': self.num}
+        materials_list.append(dic)
+
+    def alter_material_list(self, materials_list):
+        """alter a material in materials_list"""
+        for i in materials_list:
+            if i['name'] == self.name:
+                i['attack'] = self.attack
+                i['defence'] = self.defence
+                i['health'] = self.health
+                i['magic'] = self.magic
+                i['critical'] = self.critical
+                i['speed'] = self.speed
+                i['luck'] = self.luck
+                i['num'] = self.num
+
+    def create_material(self, attack, defence, health, magic, critical, speed, luck, materials_list):
+        self.set_material_ability(attack, defence, health, magic, critical, speed, luck)
+        self.add_material_list(materials_list)
+
+    def get_new_material(self, materials_list):
+        for i in materials_list:
+            if i['name'] == self.name:
+                i['num'] += 1
+                break
+
+
+def load_materials(contents, materials_list):
+    for i in contents['materials']:
+        m = Material(i['name'])
+        m.set_material_ability(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'])
+        m.num = i['num']
+        materials_list.append(m)
+
+
+def down_materials(contents, materials_list):
+    contents['materials'] = materials_list
+
+
 class Prop:
 
     def __init__(self, name, pos):
@@ -44,6 +101,7 @@ class Prop:
         self.need_exp = 10
         self.num = 0
         self.pos = pos
+        self.time = 5  # 剩余的附魔次数
 
     def set_prop_ability(self, attack, defence, health, magic, critical, speed, luck):
         self.attack = attack
@@ -84,7 +142,7 @@ class Prop:
                'critical': self.critical, 'speed': self.speed, 'luck': self.luck, 'level': self.level,
                'exp': self.exp, 'need_exp':self.need_exp, 'grow_attack': self.grow_attack, 'grow_defence': self.grow_defence,
                'grow_health': self.grow_health, 'grow_magic': self.grow_magic, 'grow_critical': self.grow_critical,
-               'grow_speed': self.grow_speed, 'grow_luck': self.grow_luck, 'num': self.num, 'pos': self.pos}
+               'grow_speed': self.grow_speed, 'grow_luck': self.grow_luck, 'num': self.num, 'pos': self.pos, 'time': self.time}
         props_list.append(dic)
 
     def alter_prop_list(self, props_list):
@@ -110,6 +168,7 @@ class Prop:
                 i['grow_critical'] = self.grow_critical
                 i['num'] = self.num
                 i['pos'] = self.pos
+                i['time'] = self.time
 
     def create_prop(self, attack, defence, health, magic, critical, speed, luck, g_attack, g_defence,
                     g_health, g_magic, g_critical, g_speed, g_luck, props_list):
@@ -145,6 +204,18 @@ class Prop:
                 exp = prop.need_exp * prop.level
                 self.get_exp(exp, props_list)
 
+    def enchant_prop(self, material, props_list):
+        """附魔"""
+        if self.time > 0:
+            self.time -= 1
+            self.attack += material.attack
+            self.defence += material.defence
+            self.health += material.health
+            self.magic += material.magic
+            self.critical += material.critical
+            self.speed += material.speed
+            self.luck += material.luck
+
 
 def load_props(contents, props_list):
     for i in contents['props']:
@@ -157,6 +228,7 @@ def load_props(contents, props_list):
         p.level = i['level']
         p.num = i['num']
         p.pos = i['pos']
+        p.time = i['time']
         props_list.append(p)
 
 
@@ -392,7 +464,9 @@ def load_file():
         with open('fileSave.json', 'a') as f:
             characters = []
             drug = []
-            dic = {'plot': 0, 'money': 0, 'characters': characters, 'drug': drug}
+            props = []
+            materials = []
+            dic = {'plot': 0, 'money': 0, 'characters': characters, 'drug': drug, 'props': props, 'materials': materials}
             dic = json.dumps(dic, indent=4, ensure_ascii=False)
             f.write(dic)
     with open('fileSave.json', 'r', encoding='utf-8') as file_object:
@@ -405,6 +479,7 @@ def down_file(contents):
     contents = json.dumps(contents, indent=4, ensure_ascii=False)
     with open('fileSave.json', 'w', encoding='utf-8') as file_object:
         """覆盖原存档"""
+        file_object.write(contents)
         file_object.write(contents)
 
 
