@@ -18,7 +18,7 @@ pygame.init()
 screen = pygame.display.set_mode(size)
 fclock = pygame.time.Clock()
 
-font = pygame.font.Font("ShenYunSuXinTi-2.ttf", 40)
+font = pygame.font.Font("ShenYunSuXinTi-2.ttf", 32)
 icon = pygame.image.load("icon.png")
 pygame.display.set_icon(icon)
 character_images = pygame.image.load("角色.png")
@@ -270,8 +270,18 @@ def show_words(words, coord):
 
 
 def show_attr(character, coord):
-    show_words('攻击' + character.attack, coord)
-
+    """change 'attack...' to '攻击' """
+    show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord [1]))
+    show_words('攻击:' + str(character.attack), (coord[0], coord[1] + 50))
+    show_words('防御:' + str(character.defence), (coord[0] + 145, coord[1] + 50))
+    show_words('生命:' + str(character.health), (coord[0], coord[1] + 100))
+    show_words('魔法:' + str(character.magic), (coord[0] + 145, coord[1] + 100))
+    show_words('暴击:' + str(character.critical), (coord[0], coord[1] + 150))
+    show_words('速度:' + str(character.speed), (coord[0] + 145, coord[1] + 150))
+    show_words('幸运:' + str(character.luck), (coord[0], coord[1] + 200))
+    show_words('洞视:' + str(character.insight), (coord[0] + 145, coord[1] + 200))
+    show_words('等级:' + str(character.level), (coord[0], coord[1] + 250))
+    """one more attr"""
 def is_new(contents):
     new = contents["plot"]
     plot_1 = ["一觉醒来，你不知道自己身处何处，", "甚至自己是何许人也亦无从得知，世界犹如混沌般恍惚。", "徘徊于这谜一般的大陆上，你决定只身探索，寻找真相......"]
@@ -349,7 +359,8 @@ while(True):
         pygame.draw.line(screen, GREY, (100, height / 2), (width - 100, height / 2), 5)
         show_words(character_list[0].name, ((width - 200) / 6 + 100, 150))
         show_words(character_list[1].name, ((width - 200) / 2 + 100, 150))
-        show_words('攻击', ((width - 200) / 6 * 5 + 100, 170))
+        show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 + 30))
+        show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 + 30))
         draw_window()
         while(True):
             if close_window() == 1:
