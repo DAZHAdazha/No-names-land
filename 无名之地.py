@@ -3,7 +3,6 @@ import time
 import sys
 import json
 import os
-import re
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -38,16 +37,16 @@ class Drug:
     def __init__(self, name):
         self.name = name
 
-    def drug_capacity(self, size=5, num=0):
-        self.size = size
+    def drug_capacity(self, drug_size=5, num=0):
+        self.drug_size = drug_size
         self.num = num
 
     def drug_effect(self, attack, defence, health, speed, magic):
-        self.attack = attack * self.size
-        self.defence = defence * self.size
-        self.health = health * self.size
-        self.speed = speed * self.size
-        self.magic = magic * self.size
+        self.attack = attack * self.drug_size
+        self.defence = defence * self.drug_size
+        self.health = health * self.drug_size
+        self.speed = speed * self.drug_size
+        self.magic = magic * self.drug_size
 
     def change_drug_dic(self, drug_list):
         dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health,
@@ -61,8 +60,8 @@ class Drug:
             if i['name'] == self.name:
                 i['num'] = self.num
 
-    def create_drug(self, attack, defence, health, speed, magic, num, size, drug_list):
-        self.drug_capacity(size, num)
+    def create_drug(self, attack, defence, health, speed, magic, num, drug_size, drug_list):
+        self.drug_capacity(drug_size, num)
         self.drug_effect(attack, defence, health, speed, magic)
         self.change_drug_dic(drug_list)
 
@@ -121,7 +120,7 @@ class Character:
         self.luck = luck
         self.insight = insight
 
-    def growth (self):
+    def growth(self):
         self.attack += self.grow_attack
         self.defence += self.grow_defence
         self.health += self.grow_health
@@ -131,7 +130,7 @@ class Character:
         self.luck += self.grow_luck
         self.insight += self.grow_insight
 
-    def set_cur_ability(self):
+    def set_cur_ability(self):  # current
         """set cur_ability"""
         self.cur_attack = self.attack
         self.cur_defence = self.defence
@@ -271,7 +270,7 @@ def show_words(words, coord):
 
 def show_attr(character, coord):
     """change 'attack...' to '攻击' """
-    show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord [1]))
+    show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord[1]))
     show_words('攻击:' + str(character.attack), (coord[0], coord[1] + 50))
     show_words('防御:' + str(character.defence), (coord[0] + 145, coord[1] + 50))
     show_words('生命:' + str(character.health), (coord[0], coord[1] + 100))
@@ -282,6 +281,8 @@ def show_attr(character, coord):
     show_words('洞视:' + str(character.insight), (coord[0] + 145, coord[1] + 200))
     show_words('等级:' + str(character.level), (coord[0], coord[1] + 250))
     """one more attr"""
+
+
 def is_new(contents):
     new = contents["plot"]
     plot_1 = ["一觉醒来，你不知道自己身处何处，", "甚至自己是何许人也亦无从得知，世界犹如混沌般恍惚。", "徘徊于这谜一般的大陆上，你决定只身探索，寻找真相......"]
@@ -326,7 +327,7 @@ def close_window():
         return 1
 
 
-while(True):
+while():
     screen.fill(BLACK)
     for event in pygame.event.get():  # event list
         if event.type == pygame.QUIT:  # close the window
@@ -362,19 +363,19 @@ while(True):
         show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 + 30))
         show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 + 30))
         draw_window()
-        while(True):
+        while():
             if close_window() == 1:
                 break
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """bag"""
         draw_window()
-        while (True):
+        while ():
             if close_window() == 1:
                 break
     if (width - 180 < mouse_pos[0] < width - 120 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """achievement"""
         draw_window()
-        while (True):
+        while ():
             if close_window() == 1:
                 break
     if (map_x_velocity > 0 and map_choice[0] < width - 10) or (map_x_velocity < 0 and map_choice[0] > 10):
