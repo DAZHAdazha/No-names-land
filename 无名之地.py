@@ -327,7 +327,7 @@ def close_window():
         return 1
 
 
-while():
+while(True):
     screen.fill(BLACK)
     for event in pygame.event.get():  # event list
         if event.type == pygame.QUIT:  # close the window
@@ -363,7 +363,7 @@ while():
         show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 + 30))
         show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 + 30))
         draw_window()
-        while():
+        while(True):
             if close_window() == 1:
                 break
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
@@ -375,7 +375,7 @@ while():
     if (width - 180 < mouse_pos[0] < width - 120 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """achievement"""
         draw_window()
-        while ():
+        while (True):
             if close_window() == 1:
                 break
     if (map_x_velocity > 0 and map_choice[0] < width - 10) or (map_x_velocity < 0 and map_choice[0] > 10):
