@@ -52,8 +52,8 @@ def down_drug(contents, drug_list):
     
 
 name = str(input("name: "))
-with open("fileSave.json",'r') as f:
-	contents = json.load(f)
+with open("fileSave.json", 'r', encoding='utf-8') as f:
+    contents = json.load(f)
 dr = Drug(name)
 dr.drug_capacity(0)
 attack = int(input("attack: "))
@@ -62,8 +62,6 @@ health = int(input("health: "))
 speed = int(input("speed: "))
 magic = int(input("magic: "))
 dr.create_drug(attack, defence, health, speed, magic, contents['drug'])
-with open("fileSave.json",'w') as f:
-	contents = json.dumps(contents, indent=4)
-	f.write(contents)
-
-
+with open("fileSave.json", 'w', encoding='utf-8') as f:
+    contents = json.dumps(contents, indent=4, ensure_ascii=False)
+    f.write(contents)
