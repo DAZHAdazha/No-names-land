@@ -8,6 +8,7 @@ BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 RED = 255, 0, 0
 GREY = 128, 128, 128
+CREAMY = 230, 230, 230  # background color
 size = width, height = 1080, 800  # size of the window
 fps = 300  # frames per second for game
 path = os.getcwd()
