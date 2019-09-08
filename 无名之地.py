@@ -466,11 +466,11 @@ def down_props(contents, props_list):
 
 
 def draw_window():
-    pygame.draw.rect(screen, BLACK, (100, 50, width - 200, height - 200), 5)
+    pygame.draw.rect(screen, BLACK, (100, 50, width - 200, height - 200), 4)
     """rect stand for (x,y,width,height)"""
-    pygame.draw.rect(screen, BLACK, (width - 130, 50, 30, 30), 5)
-    pygame.draw.line(screen, RED, (width - 125, 55), (width - 105, 75), 5)
-    pygame.draw.line(screen, RED, (width - 105, 55), (width - 125, 75), 5)
+    pygame.draw.rect(screen, BLACK, (width - 130, 50, 30, 30), 4)
+    pygame.draw.line(screen, RED, (width - 125, 55), (width - 105, 75), 4)
+    pygame.draw.line(screen, RED, (width - 105, 55), (width - 125, 75), 4)
     pygame.display.update()
     fclock.tick(fps)
 
@@ -484,6 +484,45 @@ def close_window():
     if width - 130 < mouse_pos[0] < width - 100 and 50 < mouse_pos[1] < 80 and mouse_pressed[0] == 1:
         return 1
 
+
+def show_props(content):
+    item_list_image = []
+    j = 0
+    for i in content['props']:
+        if i['pos'] == -1:
+            item_list_image.append(wand_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(wand_images, item_list_image[j])
+        elif i['pos'] == 0:
+            item_list_image.append(bow_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(bow_images, item_list_image[j])
+        elif i['pos'] == 1:
+            item_list_image.append(sword_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(sword_images, item_list_image[j])
+        elif i['pos'] == 2:
+            item_list_image.append(helmet_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(helmet_images, item_list_image[j])
+        elif i['pos'] == 3:
+            item_list_image.append(armor_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(armor_images, item_list_image[j])
+        elif i['pos'] == 4:
+            item_list_image.append(shoe_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(shoe_images, item_list_image[j])
+        elif i['pos'] == 5:
+            item_list_image.append(ring_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(ring_images, item_list_image[j])
+        elif i['pos'] == 6:
+            item_list_image.append(title_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(title_images, item_list_image[j])
+        show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
+        j += 1
 
 content = load_file()
 is_new(content)
@@ -524,9 +563,9 @@ while(True):
     '''return tuple object, which [0] represent left key, [1] for middle, [2] for right'''
     if (width - 60 < mouse_pos[0] < width and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """character"""
-        pygame.draw.line(screen, GREY, (100, height / 2 - 50), (width - 100, height / 2 - 50), 5)
-        pygame.draw.line(screen, BLACK, ((width - 200) / 3 + 100,  50), ((width - 200) / 3 + 100, height - 150), 5)
-        pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 105, 50), ((width - 200) / 1.5 + 105, height - 150), 5)
+        pygame.draw.line(screen, GREY, (100, height / 2 - 50), (width - 100, height / 2 - 50), 4)
+        pygame.draw.line(screen, BLACK, ((width - 200) / 3 + 100,  50), ((width - 200) / 3 + 100, height - 150), 4)
+        pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 105, 50), ((width - 200) / 1.5 + 105, height - 150), 4)
 
         """ merge into function"""
         show_words(character_list[0].name, ((width - 200) / 6 + 100, 100))
@@ -542,48 +581,13 @@ while(True):
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """bag"""
         for i in range(3):
-            pygame.draw.line(screen, BLACK, (100, 200 + i * 150), (width - 100, 200 + i * 150), 5)
+            pygame.draw.line(screen, BLACK, (100, 200 + i * 150), (width - 100, 200 + i * 150), 4)
         for i in range(5):
-            pygame.draw.line(screen, BLACK, (250 + i * 150, 50), (250 + i * 150, height - 150), 5)
+            pygame.draw.line(screen, BLACK, (250 + i * 150, 50), (250 + i * 150, height - 150), 4)
 
         ''' put into function'''
-        item_list_image = []
-        j = 0
-        for i in content['props']:
-            if i['pos'] == -1:
-                item_list_image.append(wand_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(wand_images, item_list_image[j])
-            elif i['pos'] == 0:
-                item_list_image.append(bow_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(bow_images, item_list_image[j])
-            elif i['pos'] == 1:
-                item_list_image.append(sword_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(sword_images, item_list_image[j])
-            elif i['pos'] == 2:
-                item_list_image.append(helmet_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(helmet_images, item_list_image[j])
-            elif i['pos'] == 3:
-                item_list_image.append(armor_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(armor_images, item_list_image[j])
-            elif i['pos'] == 4:
-                item_list_image.append(shoe_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(shoe_images, item_list_image[j])
-            elif i['pos'] == 5:
-                item_list_image.append(ring_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(ring_images, item_list_image[j])
-            elif i['pos'] == 6:
-                item_list_image.append(title_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(title_images, item_list_image[j])
-            j += 1
-            draw_window()
+        show_props(content)
+        draw_window()
         while (True):
             if close_window() == 1:
                 break
