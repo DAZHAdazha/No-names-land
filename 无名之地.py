@@ -514,10 +514,13 @@ while(True):
         pygame.draw.line(screen, WHITE, ((width - 200) / 3 + 100,  100), ((width - 200) / 3 + 100, height - 100), 5)
         pygame.draw.line(screen, WHITE, ((width - 200) / 1.5 + 105, 100), ((width - 200) / 1.5 + 105, height - 100), 5)
         pygame.draw.line(screen, GREY, (100, height / 2), (width - 100, height / 2), 5)
+        """ merge into function"""
         show_words(character_list[0].name, ((width - 200) / 6 + 100, 150))
         show_words(character_list[1].name, ((width - 200) / 2 + 100, 150))
+        show_words(character_list[2].name, ((width - 200) / 6 * 5 + 100, 150))
         show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 + 30))
         show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 + 30))
+        show_attr(character_list[2], ((width - 200) / 6 * 5 + 20, height / 2 + 30))
         draw_window()
         while(True):
             if close_window() == 1:
