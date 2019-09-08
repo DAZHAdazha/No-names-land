@@ -46,133 +46,16 @@ small_magic_images = pygame.image.load("小蓝药.png")
 big_attack_images = pygame.image.load("攻击药剂（大）.png")
 small_attack_images = pygame.image.load("攻击药剂（小）.png")
 material_images = pygame.image.load("材料.png")
+
 pygame.display.set_caption("无名之地")
+
 
 
 class Material:
-=======
-pygame.display.set_caption("无名之地")
-
-
-class Prop:
-
-    def __init__(self, name, pos):
-        """type include 1,2,3,4,5,6"""
-        """1 = weapon, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
-        self.name = name
-        self.level = 1
-        self.exp = 0
-        self.need_exp = 10
-        self.num = 0
-        self.pos = pos
-
-    def set_prop_ability(self, attack, defence, health, magic, critical, speed, luck):
-        self.attack = attack
-        self.defence = defence
-        self.health = health
-        self.magic = magic
-        self.critical = critical
-        self.speed = speed
-        self.luck = luck
-
-    def prop_growth_ability(self, attack, defence, health, magic, critical, speed, luck):
-        self.grow_attack = attack
-        self.grow_defence = defence
-        self.grow_health = health
-        self.grow_magic = magic
-        self.grow_critical = critical
-        self.grow_speed = speed
-        self.grow_luck = luck
-
-    def growth(self):
-        self.attack += self.grow_attack
-        self.defence += self.grow_defence
-        self.health += self.grow_health
-        self.magic += self.grow_magic
-        self.critical += self.grow_critical
-        self.speed += self.grow_speed
-        self.luck += self.grow_luck
-
-    def up_level(self, remainder):
-        self.level += 1
-        self.need_exp *= 1.5
-        self.exp = remainder
-        self.growth()
-
-    def add_prop_list(self, props_list):
-        """add a prop to props_list"""
-        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
-               'critical': self.critical, 'speed': self.speed, 'luck': self.luck, 'level': self.level,
-               'exp': self.exp, 'need_exp':self.need_exp, 'grow_attack': self.grow_attack, 'grow_defence': self.grow_defence,
-               'grow_health': self.grow_health, 'grow_magic': self.grow_magic, 'grow_critical': self.grow_critical,
-               'grow_speed': self.grow_speed, 'grow_luck': self.grow_luck, 'num': self.num, 'pos': self.pos}
-        props_list.append(dic)
-
-    def alter_prop_list(self, props_list):
-        """alter a prop in contents"""
-        for i in props_list:
-            if i['name'] == self.name:
-                i['attack'] = self.attack
-                i['defence'] = self.defence
-                i['health'] = self.health
-                i['magic'] = self.magic
-                i['critical'] = self.critical
-                i['speed'] = self.speed
-                i['luck'] = self.luck
-                i['level'] = self.level
-                i['need_exp'] = self.need_exp
-                i['exp'] = self.exp
-                i['grow_attack'] = self.grow_attack
-                i['grow_defence'] = self.grow_defence
-                i['grow_health'] = self.grow_health
-                i['grow_magic'] = self.grow_magic
-                i['grow_luck'] = self.grow_luck
-                i['grow_speed'] = self.grow_speed
-                i['grow_critical'] = self.grow_critical
-                i['num'] = self.num
-                i['pos'] = self.pos
-
-    def create_prop(self, attack, defence, health, magic, critical, speed, luck, g_attack, g_defence,
-                    g_health, g_magic, g_critical, g_speed, g_luck, props_list):
-        self.set_prop_ability(attack, defence, health, magic, critical, speed, luck)
-        self.prop_growth_ability(g_attack, g_defence, g_health, g_magic, g_critical, g_speed, g_luck)
-        self.add_prop_list(props_list)
-
-    def get_exp(self, get_exp, props_list):
-        self.exp += get_exp
-        while self.exp >= self.need_exp:
-            remainder = self.exp - self.need_exp
-            self.up_level(remainder)
-        self.alter_prop_list(props_list)
-
-    def get_new_prop(self, props_list):
-        for i in props_list:
-            if i['name'] == self.name:
-                i['num'] += 1
-                break
-
-    def destroy_prop(self, props_list):
-        for i in props_list:
-            if i['name'] == self.name:
-                if i['num'] > 0:
-                    i['num'] -= 1
-                    break
-
-    def grow_prop(self, prop, props_list):
-        for i in props_list:
-            if i['name'] == prop.name:
-                i.num -= 1
-            if self.name == i['name']:
-                exp = prop.need_exp * prop.level
-                self.get_exp(exp, props_list)
-
-
-class Drug:
 
     def __init__(self, name):
         self.name = name
         self.num = 0
-
 
     def set_material_ability(self, attack, defence, health, magic, critical, speed, luck):
         self.attack = attack
@@ -350,7 +233,6 @@ class Drug:
         self.speed = speed
         self.magic = magic
 
-
     def change_drug_dic(self, drug_list):
         dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
                'speed': self.speed, 'num': self.num}
@@ -362,11 +244,11 @@ class Drug:
             if i['name'] == self.name:
                 i['num'] = self.num
 
-
     def create_drug(self, attack, defence, health, speed, magic, num, drug_list):
         self.num = num
         self.drug_effect(attack, defence, health, speed, magic)
         self.change_drug_dic(drug_list)
+
 
 
 class Character:
@@ -947,7 +829,7 @@ while(True):
             cur_word = ''
             if mouse_pressed[0] == 1:
                 chose_num = click_on_props()
-                if 0 <= chose_num <= props_num:
+                if 0 <= chose_num < props_num:
                     pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 800)),)
                     cur_word = '名称:' + str(content['props'][chose_num]['name']) + ' ' +\
                                '攻击:' + str(content['props'][chose_num]['attack']) + ' ' +\
