@@ -3,6 +3,7 @@ import time
 import sys
 import json
 import os
+import types
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -38,6 +39,18 @@ armor_images = pygame.image.load("护甲.png")
 wand_images = pygame.image.load("法杖.png")
 bow_images = pygame.image.load("弓箭.png")
 title_images = pygame.image.load("称号.png")
+big_health_images = pygame.image.load("大红药.png")
+small_health_images = pygame.image.load("小红药.png")
+big_magic_images = pygame.image.load("大蓝药.png")
+small_magic_images = pygame.image.load("小蓝药.png")
+big_attack_images = pygame.image.load("攻击药剂（大）.png")
+small_attack_images = pygame.image.load("攻击药剂（小）.png")
+material_images = pygame.image.load("材料.png")
+pygame.display.set_caption("无名之地")
+
+
+class Material:
+=======
 pygame.display.set_caption("无名之地")
 
 
@@ -158,21 +171,188 @@ class Drug:
 
     def __init__(self, name):
         self.name = name
+        self.num = 0
 
-    def drug_capacity(self, drug_size=5, num=0):
-        self.drug_size = drug_size
-        self.num = num
+
+    def set_material_ability(self, attack, defence, health, magic, critical, speed, luck):
+        self.attack = attack
+        self.defence = defence
+        self.health = health
+        self.magic = magic
+        self.critical = critical
+        self.speed = speed
+        self.luck = luck
+
+    def add_material_list(self, materials_list):
+        """add a material to materials_list"""
+        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
+               'critical': self.critical, 'speed': self.speed, 'luck': self.luck, 'num': self.num}
+        materials_list.append(dic)
+
+    def alter_material_list(self, materials_list):
+        """alter a material in materials_list"""
+        for i in materials_list:
+            if i['name'] == self.name:
+                i['attack'] = self.attack
+                i['defence'] = self.defence
+                i['health'] = self.health
+                i['magic'] = self.magic
+                i['critical'] = self.critical
+                i['speed'] = self.speed
+                i['luck'] = self.luck
+                i['num'] = self.num
+
+    def create_material(self, attack, defence, health, magic, critical, speed, luck, materials_list):
+        self.set_material_ability(attack, defence, health, magic, critical, speed, luck)
+        self.add_material_list(materials_list)
+
+    def get_new_material(self, materials_list):
+        for i in materials_list:
+            if i['name'] == self.name:
+                i['num'] += 1
+                break
+
+
+class Baggage:
+
+    def __init__(self, contents):
+        self.capacity = 30
+        self.objects = contents['props'][:] + contents['drug'][:] + contents['materials'][:]
+        self.prop_num = len(contents['props'])
+        self.drug_num = len(contents['drug']) + self.prop_num
+        self.material_num = len(contents['materials']) + self.drug_num
+        self.amount = len(self.objects)
+
+
+class Prop:
+
+    def __init__(self, name, pos):
+        """type include 1,2,3,4,5,6"""
+        """-1 = 法杖， 1 = 剑， 0 = 弓箭, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
+        self.name = name
+        self.level = 1
+        self.exp = 0
+        self.need_exp = 10
+        self.num = 0
+        self.pos = pos
+        self.time = 5  # 剩余的附魔次数
+
+    def set_prop_ability(self, attack, defence, health, magic, critical, speed, luck):
+        self.attack = attack
+        self.defence = defence
+        self.health = health
+        self.magic = magic
+        self.critical = critical
+        self.speed = speed
+        self.luck = luck
+
+    def prop_growth_ability(self, attack, defence, health, magic, critical, speed, luck):
+        self.grow_attack = attack
+        self.grow_defence = defence
+        self.grow_health = health
+        self.grow_magic = magic
+        self.grow_critical = critical
+        self.grow_speed = speed
+        self.grow_luck = luck
+
+    def growth(self):
+        self.attack += self.grow_attack
+        self.defence += self.grow_defence
+        self.health += self.grow_health
+        self.magic += self.grow_magic
+        self.critical += self.grow_critical
+        self.speed += self.grow_speed
+        self.luck += self.grow_luck
+
+    def up_level(self, remainder):
+        self.level += 1
+        self.need_exp *= 1.5
+        self.exp = remainder
+        self.growth()
+
+    def add_prop_list(self, props_list):
+        """add a prop to props_list"""
+        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
+               'critical': self.critical, 'speed': self.speed, 'luck': self.luck, 'level': self.level,
+               'exp': self.exp, 'need_exp':self.need_exp, 'grow_attack': self.grow_attack, 'grow_defence': self.grow_defence,
+               'grow_health': self.grow_health, 'grow_magic': self.grow_magic, 'grow_critical': self.grow_critical,
+               'grow_speed': self.grow_speed, 'grow_luck': self.grow_luck, 'num': self.num, 'pos': self.pos, 'time': self.time}
+        props_list.append(dic)
+
+    def alter_prop_list(self, props_list):
+        """alter a prop in contents"""
+        for i in props_list:
+            if i['name'] == self.name:
+                i['attack'] = self.attack
+                i['defence'] = self.defence
+                i['health'] = self.health
+                i['magic'] = self.magic
+                i['critical'] = self.critical
+                i['speed'] = self.speed
+                i['luck'] = self.luck
+                i['level'] = self.level
+                i['need_exp'] = self.need_exp
+                i['exp'] = self.exp
+                i['grow_attack'] = self.grow_attack
+                i['grow_defence'] = self.grow_defence
+                i['grow_health'] = self.grow_health
+                i['grow_magic'] = self.grow_magic
+                i['grow_luck'] = self.grow_luck
+                i['grow_speed'] = self.grow_speed
+                i['grow_critical'] = self.grow_critical
+                i['num'] = self.num
+                i['pos'] = self.pos
+                i['time'] = self.time
+
+    def create_prop(self, attack, defence, health, magic, critical, speed, luck, g_attack, g_defence,
+                    g_health, g_magic, g_critical, g_speed, g_luck, props_list):
+        self.set_prop_ability(attack, defence, health, magic, critical, speed, luck)
+        self.prop_growth_ability(g_attack, g_defence, g_health, g_magic, g_critical, g_speed, g_luck)
+        self.add_prop_list(props_list)
+
+    def get_exp(self, get_exp, props_list):
+        self.exp += get_exp
+        while self.exp >= self.need_exp:
+            remainder = self.exp - self.need_exp
+            self.up_level(remainder)
+        self.alter_prop_list(props_list)
+
+    def grow_prop(self, prop, props_list):
+        for i in props_list:
+            if i['name'] == prop.name:
+                props_list.remove(prop.name)
+            if self.name == i['name']:
+                exp = prop.need_exp * prop.level
+                self.get_exp(exp, props_list)
+
+    def enchant_prop(self, material):
+        """附魔"""
+        if self.time > 0:
+            self.time -= 1
+            self.attack += material.attack
+            self.defence += material.defence
+            self.health += material.health
+            self.magic += material.magic
+            self.critical += material.critical
+            self.speed += material.speed
+            self.luck += material.luck
+
+
+class Drug:
+
+    def __init__(self, name):
+        self.name = name
 
     def drug_effect(self, attack, defence, health, speed, magic):
-        self.attack = attack * self.drug_size
-        self.defence = defence * self.drug_size
-        self.health = health * self.drug_size
-        self.speed = speed * self.drug_size
-        self.magic = magic * self.drug_size
+        self.attack = attack
+        self.defence = defence
+        self.health = health
+        self.speed = speed
+        self.magic = magic
+
 
     def change_drug_dic(self, drug_list):
-        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health,
-               'magic': self.magic,
+        dic = {'name': self.name, 'attack': self.attack, 'defence': self.defence, 'health': self.health, 'magic': self.magic,
                'speed': self.speed, 'num': self.num}
         drug_list.append(dic)
 
@@ -182,12 +362,11 @@ class Drug:
             if i['name'] == self.name:
                 i['num'] = self.num
 
-    def create_drug(self, attack, defence, health, speed, magic, num, drug_size, drug_list):
-        self.drug_capacity(drug_size, num)
+
+    def create_drug(self, attack, defence, health, speed, magic, num, drug_list):
+        self.num = num
         self.drug_effect(attack, defence, health, speed, magic)
         self.change_drug_dic(drug_list)
-
-
 
 
 class Character:
@@ -360,7 +539,9 @@ def load_file():
         with open('fileSave.json', 'a') as f:
             characters = []
             drug = []
-            dic = {'plot': 0, 'money': 0, 'characters': characters, 'drug': drug}
+            props = []
+            materials = []
+            dic = {'plot': 0, 'money': 0, 'characters': characters, 'drug': drug, 'props': props, 'materials': materials}
             dic = json.dumps(dic, indent=4, ensure_ascii=False)
             f.write(dic)
     with open('fileSave.json', 'r', encoding='utf-8') as file_object:
@@ -373,6 +554,7 @@ def down_file(contents):
     contents = json.dumps(contents, indent=4, ensure_ascii=False)
     with open('fileSave.json', 'w', encoding='utf-8') as file_object:
         """覆盖原存档"""
+        file_object.write(contents)
         file_object.write(contents)
 
 
@@ -458,6 +640,7 @@ def load_props(contents, props_list):
         p.level = i['level']
         p.num = i['num']
         p.pos = i['pos']
+        p.time = i['time']
         props_list.append(p)
 
 
@@ -485,10 +668,10 @@ def close_window():
         return 1
 
 
-def show_props(content):
+def show_object(baggage):
     item_list_image = []
     j = 0
-    for i in content['props']:
+    for i in baggage.objects[:baggage.prop_num]:
         if i['pos'] == -1:
             item_list_image.append(wand_images.get_rect())
             item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
@@ -523,7 +706,165 @@ def show_props(content):
             screen.blit(title_images, item_list_image[j])
         show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
         j += 1
+    for i in baggage.objects[baggage.prop_num:baggage.drug_num]:
+        if i['name'] == '大红药':
+            item_list_image.append(big_health_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(big_health_images, item_list_image[j])
+        elif i['name'] == '小红药':
+            item_list_image.append(small_health_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(small_health_images, item_list_image[j])
+        elif i['name'] == '大蓝药':
+            item_list_image.append(big_magic_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(big_magic_images, item_list_image[j])
+        elif i['name'] == '小蓝药':
+            item_list_image.append(small_magic_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(small_magic_images, item_list_image[j])
+        elif i['name'] == '小攻击药剂':
+            item_list_image.append(small_attack_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(small_attack_images, item_list_image[j])
+        elif i['name'] == '大攻击药剂':
+            item_list_image.append(big_attack_images.get_rect())
+            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+            screen.blit(big_attack_images, item_list_image[j])
+        show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
+        j += 1
+    for i in baggage.objects[baggage.drug_num:baggage.material_num]:
+        item_list_image.append(material_images.get_rect())
+        item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+        screen.blit(material_images, item_list_image[j])
+        show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
+        j += 1
     return len(item_list_image)
+
+def is_full(contents, baggage):
+    contents_len = len(contents['props'][:] + contents['drug'][:] + contents['materials'][:])
+    if baggage.capacity == contents_len:
+        return True
+    else:
+        return False
+
+
+def get_new_object(contents, baggage, obj, props_list, drug_list, materials_list):
+    if is_full(contents, baggage):
+        # 询问是否整理背包
+        # 是：打开背包
+        # 否：sale_obj(contents, baggage, obj, props_list, drug_list, materials_list)
+        return
+    else:
+        baggage.amount += 1
+        if obj == type(Props()):
+            contents['props'].append(obj)
+            props_list.append(obj)
+            baggage.objects.insert(baggage.prop_num, obj)
+            baggage.prop_num += 1
+            baggage.drug_num += 1
+            baggage.material_num += 1
+        elif obj == type(Drug()):
+            drug_list.append(obj)
+            contents['drug'].append(obj)
+            baggage.objects.insert(baggage.drug_num, obj)
+            baggage.drug_num += 1
+            baggage.material_num += 1
+        elif obj == type(Materials()):
+            materials_list.append(obj)
+            contents['materials'].append(obj)
+            baggage.objects.insert(baggage.material_num, obj)
+            baggage.material_num += 1
+
+
+def sale_obj(contents, baggage, obj, props_list, drug_list, materials_list):
+    contents['money'] += obj.value  # value是物品的价值
+    baggage.amount -= 1
+    if obj == type(Props()):
+        contents['props'].remove(obj)
+        props_list.remove(obj)
+        baggage.objects.remove(obj)
+        baggage.prop_num -= 1
+        baggage.drug_num -= 1
+        baggage.material_num -= 1
+    elif obj == type(Drug()):
+        obj.num -= 1
+        baggage.drug_num -= 1
+        baggage.material_num -= 1
+        if obj.num == 0:
+            contents['drug'].remove(obj)
+            drug_list.remove(obj)
+            baggage.objects.remove(obj)
+        else:
+            obj.alter_drug(contents)
+            for i in baggage.objects:
+                if i['name'] == obj.name:
+                    i['num'] = obj.num
+            for i in drug_list:
+                if i['name'] == obj.name:
+                    i['num'] = obj.num
+    elif obj == type(Materials()):
+        obj.num -= 1
+        baggage.material_num -= 1
+        if obj.num == 0:
+            contents['materials'].remove(obj)
+            baggage.objects.remove(obj)
+            materials_list.remove(obj)
+        else:
+            obj.alter_material_list(materials_list)
+            obj.alter_material_list(baggage.object)
+            obj.alter_material_list(contents['materials'])
+
+
+def operate_object(contents, baggage, obj, props_list, materials_list, drug_list):
+    if obj == type(Props()):
+        # 提示进行操作，出售，强化
+        # if 出售:
+        sale_obj(contents, baggage, obj, props_list, drug_list, materials_list)
+        # if 强化：
+        # 选择消耗的装备 prop
+        obj.grow_prop(prop, props_list)
+        contents['props'] = props_list
+        baggage.objects.remove(obj)
+        baggage.prop_num -= 1
+        baggage.drug_num -= 1
+        baggage.material_num -= 1
+    elif obj == type(Drug()):
+        # 提示进行操作，出售
+        sale_obj(contents, baggage, obj, props_list, drug_list, materials_list)
+    elif obj == type(Materials()):
+        # 提示操作，出售，使用
+        # if 出售:
+        sale_obj(contents, baggage, obj, props_list, drug_list, materials_list)
+        # elif 使用:
+        # 选择附魔的装备 prop
+        prop.enchant_prop(obj)
+        prop.alter_prop_list(props_list)
+        prop.alter_prop_list(baggage.objects)
+        prop.alter_prop_list(contents['props'])
+        obj.num -= 1
+        baggage.material_num -= 1
+        if obj.num == 0:
+            contents['materials'].remove(obj)
+            baggage.objects.remove(obj)
+            materials_list.remove(obj)
+        else:
+            obj.alter_material_list(materials_list)
+            obj.alter_material_list(baggage.object)
+            obj.alter_material_list(contents['materials'])
+
+
+def load_materials(contents, materials_list):
+    for i in contents['materials']:
+        m = Material(i['name'])
+        m.set_material_ability(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'])
+        m.num = i['num']
+        materials_list.append(m)
+
+
+def down_materials(contents, materials_list):
+    contents['materials'] = materials_list
+
 
 
 def click_on_props():
@@ -536,6 +877,7 @@ def click_on_props():
         return -1
 
 content = load_file()
+baggage = Baggage(content)
 is_new(content)
 character_list = []
 drug_list = []
@@ -598,8 +940,7 @@ while(True):
             pygame.draw.line(screen, BLACK, (250 + i * 150, 50), (250 + i * 150, height - 150), 4)
 
         ''' put into function'''
-
-        props_num = show_props(content)
+        props_num = show_object(baggage)
         draw_window()
         while (True):
             mouse_pressed = pygame.mouse.get_pressed()
