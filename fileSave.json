@@ -110,7 +110,7 @@
             "num": 0
         },
         {
-            "name": "攻击药剂（小）",
+            "name": "小攻击药剂",
             "attack": 20,
             "defence": 0,
             "health": 0,
@@ -119,7 +119,7 @@
             "num": 0
         },
         {
-            "name": "攻击药剂（大）",
+            "name": "大攻击药剂",
             "attack": 40,
             "defence": 0,
             "health": 0,
