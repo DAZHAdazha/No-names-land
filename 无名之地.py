@@ -523,6 +523,17 @@ def show_props(content):
             screen.blit(title_images, item_list_image[j])
         show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
         j += 1
+    return len(item_list_image)
+
+
+def click_on_props():
+        mouse_pos = pygame.mouse.get_pos()
+        for i in range(4):
+            if 100 < mouse_pos[0] < width - 100 and 50 + i * 150 < mouse_pos[1] < 200 + i * 150:
+                for j in range(6):
+                    if 100 + j * 150 < mouse_pos[0] < 250 + j * 150:
+                        return i * 6 + j
+        return -1
 
 content = load_file()
 is_new(content)
@@ -580,17 +591,36 @@ while(True):
                 break
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """bag"""
+
         for i in range(3):
             pygame.draw.line(screen, BLACK, (100, 200 + i * 150), (width - 100, 200 + i * 150), 4)
         for i in range(5):
             pygame.draw.line(screen, BLACK, (250 + i * 150, 50), (250 + i * 150, height - 150), 4)
 
         ''' put into function'''
-        show_props(content)
+
+        props_num = show_props(content)
         draw_window()
         while (True):
+            mouse_pressed = pygame.mouse.get_pressed()
+            cur_word = ''
+            if mouse_pressed[0] == 1:
+                chose_num = click_on_props()
+                if 0 <= chose_num <= props_num:
+                    pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 800)),)
+                    cur_word = '名称:' + str(content['props'][chose_num]['name']) + ' ' +\
+                               '攻击:' + str(content['props'][chose_num]['attack']) + ' ' +\
+                               '防御:' + str(content['props'][chose_num]['defence']) + ' ' +\
+                               '生命:' + str(content['props'][chose_num]['health']) + ' ' +\
+                               '魔法:' + str(content['props'][chose_num]['magic']) + ' ' +\
+                               '暴击:' + str(content['props'][chose_num]['critical']) + ' ' +\
+                               '速度:' + str(content['props'][chose_num]['speed']) + ' ' +\
+                               '幸运:' + str(content['props'][chose_num]['luck'])
+            show_words(cur_word, (width / 2, height - 120))
             if close_window() == 1:
                 break
+            pygame.display.update()
+            fclock.tick(fps)
     if (width - 180 < mouse_pos[0] < width - 120 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
         """achievement"""
         draw_window()
