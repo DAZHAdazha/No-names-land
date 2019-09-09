@@ -50,9 +50,7 @@ material_images = pygame.image.load("材料.png")
 pygame.display.set_caption("无名之地")
 
 
-
 class Material:
-
     def __init__(self, name):
         self.name = name
         self.num = 0
@@ -97,7 +95,6 @@ class Material:
 
 
 class Baggage:
-
     def __init__(self, contents):
         self.capacity = 30
         self.objects = contents['props'][:] + contents['drug'][:] + contents['materials'][:]
@@ -108,7 +105,6 @@ class Baggage:
 
 
 class Prop:
-
     def __init__(self, name, pos):
         """type include 1,2,3,4,5,6"""
         """-1 = 法杖， 1 = 剑， 0 = 弓箭, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
@@ -249,9 +245,7 @@ class Drug:
         self.change_drug_dic(drug_list)
 
 
-
 class Character:
-
     def __init__(self, name):
         self.name = name
         self.level = 1
@@ -457,17 +451,13 @@ def show_words(words, coord):
 
 
 def show_attr(character, coord):
-    show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord[1]))
-    show_words('攻击:' + str(character.attack), (coord[0], coord[1] + 50))
-    show_words('防御:' + str(character.defence), (coord[0] + 145, coord[1] + 50))
-    show_words('生命:' + str(character.health), (coord[0], coord[1] + 100))
-    show_words('魔法:' + str(character.magic), (coord[0] + 145, coord[1] + 100))
-    show_words('暴击:' + str(character.critical), (coord[0], coord[1] + 150))
-    show_words('速度:' + str(character.speed), (coord[0] + 145, coord[1] + 150))
-    show_words('幸运:' + str(character.luck), (coord[0], coord[1] + 200))
-    show_words('洞视:' + str(character.insight), (coord[0] + 145, coord[1] + 200))
-    show_words('等级:' + str(character.level), (coord[0], coord[1] + 250))
-    """one more attr"""
+    num = 0
+    for attr in character:
+        if not re.findall('(^grow|position|exp|need_exp|name)', str(attr)):
+            show_words(translate(attr) + ':' + str(character[attr]),
+                       (coord[0] + num % 2 * 145, coord[1] + num // 2 * 50 + 50))
+            num += 1
+    show_words('经验:' + str(character['exp']) + '/' + str(character['need_exp']), (coord[0] + 72, coord[1]))
 
 
 def is_new(contents):
@@ -482,7 +472,7 @@ def is_new(contents):
         fclock.tick(fps)
         down_file(contents)
 
-
+# put into drug_function
 def use_drug(drug, character):
     character.cur_ability(drug.attack, drug.defence, drug.health, drug.magic, drug.speed)
     drug.num -= 1
@@ -508,6 +498,9 @@ def down_drug(contents, drug_list):
     for j in drug_list:
         j.alter_drug(contents)
 
+# <<<<
+
+#put into prop_function
 
 def load_props(contents, props_list):
     for i in contents['props']:
@@ -527,6 +520,8 @@ def load_props(contents, props_list):
 def down_props(contents, props_list):
     contents['props'] = props_list
 
+
+# <<<<<<<
 
 def draw_window():
     pygame.draw.rect(screen, BLACK, (100, 50, width - 200, height - 200), 4)
@@ -550,76 +545,32 @@ def close_window():
 
 def show_object(baggage):
     item_list_image = []
+    dic = {'-1': 'wand_images', '0': 'bow_images', '1': 'sword_images', '2': 'helmet_images', '3': 'armor_images',
+           '4': 'shoe_images', '5': 'ring_images', '6': 'title_images', '大红药': 'big_health_images',
+           '小红药': 'small_health_images', '大蓝药': 'big_magic_images', '小蓝药': 'small_magic_images',
+           '小攻击药': 'small_attack_images', '大攻击药': 'big_attack_images'}
     j = 0
     for i in baggage.objects[:baggage.prop_num]:
-        if i['pos'] == -1:
-            item_list_image.append(wand_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(wand_images, item_list_image[j])
-        elif i['pos'] == 0:
-            item_list_image.append(bow_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(bow_images, item_list_image[j])
-        elif i['pos'] == 1:
-            item_list_image.append(sword_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(sword_images, item_list_image[j])
-        elif i['pos'] == 2:
-            item_list_image.append(helmet_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(helmet_images, item_list_image[j])
-        elif i['pos'] == 3:
-            item_list_image.append(armor_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(armor_images, item_list_image[j])
-        elif i['pos'] == 4:
-            item_list_image.append(shoe_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(shoe_images, item_list_image[j])
-        elif i['pos'] == 5:
-            item_list_image.append(ring_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(ring_images, item_list_image[j])
-        elif i['pos'] == 6:
-            item_list_image.append(title_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(title_images, item_list_image[j])
+        item_list_image.append(eval(dic[str(i['pos'])]).get_rect())
+        item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+        screen.blit(eval(dic[str(i['pos'])]), item_list_image[j])
         show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
         j += 1
     for i in baggage.objects[baggage.prop_num:baggage.drug_num]:
-        if i['name'] == '大红药':
-            item_list_image.append(big_health_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(big_health_images, item_list_image[j])
-        elif i['name'] == '小红药':
-            item_list_image.append(small_health_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(small_health_images, item_list_image[j])
-        elif i['name'] == '大蓝药':
-            item_list_image.append(big_magic_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(big_magic_images, item_list_image[j])
-        elif i['name'] == '小蓝药':
-            item_list_image.append(small_magic_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(small_magic_images, item_list_image[j])
-        elif i['name'] == '小攻击药':
-            item_list_image.append(small_attack_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(small_attack_images, item_list_image[j])
-        elif i['name'] == '大攻击药':
-            item_list_image.append(big_attack_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(big_attack_images, item_list_image[j])
+        item_list_image.append(eval(dic[str(i['name'])]).get_rect())
+        item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
+        screen.blit(eval(dic[str(i['name'])]), item_list_image[j])
         show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
         j += 1
     for i in baggage.objects[baggage.drug_num:baggage.material_num]:
+        '''change into upper form'''
         item_list_image.append(material_images.get_rect())
         item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
         screen.blit(material_images, item_list_image[j])
         show_words(i['name'], (j % 6 * 150 + 180, j // 6 * 150 + 150))
         j += 1
     return len(item_list_image)
+
 
 def is_full(contents, baggage):
     contents_len = len(contents['props'][:] + contents['drug'][:] + contents['materials'][:])
@@ -746,7 +697,6 @@ def down_materials(contents, materials_list):
     contents['materials'] = materials_list
 
 
-
 def click_on_props():
         mouse_pos = pygame.mouse.get_pos()
         for i in range(4):
@@ -756,10 +706,13 @@ def click_on_props():
                         return i * 6 + j
         return -1
 
+
 def translate(str):
     translator = {'name': '名称', 'attack': '攻击', 'defence': '防御', 'health': '生命', 'magic': '魔法', 'critical': '暴击',
-                  'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'time': '可附魔次数'} # time change
+                  'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'time': '可附魔次数', 'insight': '洞视'}
+    # time change
     return translator[str]
+
 
 def draw_character():
         pygame.draw.line(screen, GREY, (100, height / 2 - 50), (width - 100, height / 2 - 50), 4)
@@ -768,10 +721,11 @@ def draw_character():
         show_words(character_list[0].name, ((width - 200) / 6 + 100, 100))
         show_words(character_list[1].name, ((width - 200) / 2 + 100, 100))
         show_words(character_list[2].name, ((width - 200) / 6 * 5 + 100, 100))
-        show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 - 20))
-        show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 - 20))
-        show_attr(character_list[2], ((width - 200) / 6 * 5 + 20, height / 2 - 20))
+        show_attr(content['characters'][0], ((width - 200) / 6 + 20, height / 2 - 20))
+        show_attr(content['characters'][1], ((width - 200) / 2 + 20, height / 2 - 20))
+        show_attr(content['characters'][2], ((width - 200) / 6 * 5 + 20, height / 2 - 20))
         draw_window()
+
 
 content = load_file()
 baggage = Baggage(content)
