@@ -1,3 +1,4 @@
+#coding=gbk
 import pygame
 import time
 import sys
@@ -657,43 +658,46 @@ def get_new_object(contents, baggage, obj, props_list, drug_list, materials_list
             baggage.material_num += 1
 
 
-def sale_obj(contents, baggage, obj, props_list, drug_list, materials_list):
-    contents['money'] += obj.value  # value是物品的价值
-    baggage.amount -= 1
-    if obj == type(Props()):
-        contents['props'].remove(obj)
-        props_list.remove(obj)
-        baggage.objects.remove(obj)
+def sale_obj(contents, baggage, num, drug_list):
+    contents['money'] += baggage.objects[num]['value']  # value是物品的价值
+    if 0 <= num and num < baggage.prop_num:
+        contents['props'].pop(num)  # 进入if后创建类
+        baggage.objects.pop(num)
         baggage.prop_num -= 1
         baggage.drug_num -= 1
         baggage.material_num -= 1
-    elif obj == type(Drug()):
-        obj.num -= 1
-        baggage.drug_num -= 1
-        baggage.material_num -= 1
-        if obj.num == 0:
-            contents['drug'].remove(obj)
-            drug_list.remove(obj)
-            baggage.objects.remove(obj)
+        baggage.amount -= 1
+    elif baggage.prop_num <= num and num < baggage.drug_num:
+        baggage.objects[num]['num'] -= 1
+        if baggage.objects[num]['num'] == 0:
+            contents['drug'].pop(num - baggage.prop_num)
+            drug_list.pop(num - baggage.prop_num)
+            baggage.drug_num -= 1
+            baggage.material_num -= 1
+            baggage.objects.pop(num)
+            baggage.amount -= 1
         else:
-            obj.alter_drug(contents)
             for i in baggage.objects:
-                if i['name'] == obj.name:
-                    i['num'] = obj.num
-            for i in drug_list:
-                if i['name'] == obj.name:
-                    i['num'] = obj.num
-    elif obj == type(Materials()):
-        obj.num -= 1
-        baggage.material_num -= 1
-        if obj.num == 0:
-            contents['materials'].remove(obj)
-            baggage.objects.remove(obj)
-            materials_list.remove(obj)
+                if i['name'] == baggage.objects[num]['name']:
+                    i['num'] = baggage.objects[num]['num']
+            for i in content['drug']:
+                if i['name'] == baggage.objects[num]['name']:
+                    i['num'] = baggage.objects[num]['num']
+    elif baggage.drug_num <= num and num < baggage.material_num:
+        baggage.objects[num]['num'] -= 1
+        if baggage.objects[num]['num'] == 0:
+            baggage.material_num -= 1
+            contents['materials'].pop(num - baggage.drug_num)
+            baggage.objects.pop(num)
+            baggage.amount -= 1
         else:
-            obj.alter_material_list(materials_list)
-            obj.alter_material_list(baggage.object)
-            obj.alter_material_list(contents['materials'])
+            for i in baggage.objects:
+                if i['name'] == baggage.objects[num]['name']:
+                    i['num'] = baggage.objects[num]['num']
+            for i in content['materials']:
+                if i['name'] == baggage.objects[num]['name']:
+                    i['num'] = baggage.objects[num]['num']
+    print(str(baggage.objects))
 
 
 def operate_object(contents, baggage, obj, props_list, materials_list, drug_list):
@@ -758,7 +762,7 @@ def click_on_props():
 
 def translate(str):
     translator = {'name': '名称', 'attack': '攻击', 'defence': '防御', 'health': '生命', 'magic': '魔法', 'critical': '暴击',
-                  'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'time': '可附魔次数'} # time change
+                  'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'enchant_time': '可附魔次数', 'value': '价格'} # time change
     return translator[str]
 
 def draw_character():
@@ -829,7 +833,13 @@ while(True):
             mouse_pressed = pygame.mouse.get_pressed()
             cur_word_1 = ''
             cur_word_2 = ''
-            if mouse_pressed[0] == 1:
+            if mouse_pressed[2] == 1:
+                chose_num = click_on_props()
+                if 0 <= chose_num < props_num:
+                    sale_obj(content, baggage, chose_num, drug_list)
+                    print(content['money'])
+                    time.sleep(0.5)
+            elif mouse_pressed[0] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
                     pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 800)),)
