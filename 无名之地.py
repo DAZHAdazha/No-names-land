@@ -724,6 +724,10 @@ def draw_character():
         show_attr(content['characters'][0], ((width - 200) / 6 + 20, height / 2 - 20))
         show_attr(content['characters'][1], ((width - 200) / 2 + 20, height / 2 - 20))
         show_attr(content['characters'][2], ((width - 200) / 6 * 5 + 20, height / 2 - 20))
+        for i in range(6):
+            pygame.draw.rect(screen, GREY, (((width - 200) / 6 - 40 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
+            pygame.draw.rect(screen, GREY, (((width - 200) / 2 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
+            pygame.draw.rect(screen, GREY, (((width - 200) / 6 * 5 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
         draw_window()
 
 
@@ -746,13 +750,13 @@ while(True):
             sys.exit()
         elif event.type == pygame.KEYDOWN:  # event of press the key
             if event.key == pygame.K_d:
-                map_x_velocity = 1
+                map_x_velocity = 2
             if event.key == pygame.K_s:
-                map_y_velocity = 1
+                map_y_velocity = 2
             if event.key == pygame.K_a:
-                map_x_velocity = -1
+                map_x_velocity = -2
             if event.key == pygame.K_w:
-                map_y_velocity = -1
+                map_y_velocity = -2
         elif event.type == pygame.KEYUP:  # event of release the key
             if event.key == pygame.K_d:
                 map_x_velocity = 0
