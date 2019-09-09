@@ -70,29 +70,6 @@
             "grow_luck": 0,
             "grow_insight": 0,
             "position": []
-        },
-        {
-            "name": "Swire",
-            "attack": 9,
-            "defence": 8,
-            "health": 91,
-            "magic": 80,
-            "critical": 0,
-            "speed": 4,
-            "luck": 2,
-            "insight": 0,
-            "level": 1,
-            "exp": 0,
-            "need_exp": 10,
-            "grow_attack": 3,
-            "grow_defence": 3,
-            "grow_health": 11,
-            "grow_magic": 17,
-            "grow_critical": 0,
-            "grow_speed": 0,
-            "grow_luck": 0,
-            "grow_insight": 0,
-            "position": []
         }
     ],
     "drug": [
@@ -103,7 +80,8 @@
             "health": 150,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 4
         },
         {
             "name": "小红药",
@@ -112,7 +90,8 @@
             "health": 50,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 0,
+            "value": 2
         },
         {
             "name": "小蓝药",
@@ -121,7 +100,8 @@
             "health": 0,
             "magic": 50,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 2
         },
         {
             "name": "大蓝药",
@@ -130,7 +110,8 @@
             "health": 0,
             "magic": 150,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 4
         },
         {
             "name": "小攻击药",
@@ -139,22 +120,23 @@
             "health": 0,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 2
         },
         {
-
             "name": "大攻击药",
             "attack": 40,
             "defence": 0,
             "health": 0,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 4
         }
     ],
     "props": [
         {
-            "name": "风暴巨剑",
+            "name": "暴风大剑",
             "attack": 3,
             "defence": 0,
             "health": 0,
@@ -172,9 +154,9 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
             "pos": 1,
-            "time": 5
+            "enchant_time": 5,
+            "value": 4
         },
         {
             "name": "破晓之弓",
@@ -195,12 +177,12 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
             "pos": 0,
-            "time": 5
+            "enchant_time": 5,
+            "value": 4
         },
         {
-            "name": "罗伯的眼珠",
+            "name": "基利克斯的眼珠",
             "attack": 1,
             "defence": 1,
             "health": 20,
@@ -218,12 +200,12 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
             "pos": 5,
-            "time": 5
+            "enchant_time": 5,
+            "value": 2
         },
         {
-            "name": "小树枝",
+            "name": "初学者的树枝",
             "attack": 2,
             "defence": 0,
             "health": 3,
@@ -241,8 +223,9 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": -1
+            "pos": -1,
+            "enchant_time": 5,
+            "value": 2
         },
         {
             "name": "钢盔",
@@ -263,8 +246,9 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 2
+            "pos": 2,
+            "enchant_time": 5,
+            "value": 2
         },
         {
             "name": "黑铁铠甲",
@@ -285,11 +269,12 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 3
+            "pos": 3,
+            "enchant_time": 5,
+            "value": 3
         },
         {
-            "name": "廉价的皮鞋",
+            "name": "廉价的旧皮鞋",
             "attack": 0,
             "defence": 3,
             "health": 5,
@@ -307,11 +292,12 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 4
+            "pos": 4,
+            "enchant_time": 5,
+            "value": 2
         },
         {
-            "name": "琐罗之戒",
+            "name": "琐罗克斯之戒",
             "attack": 2,
             "defence": 2,
             "health": 3,
@@ -329,11 +315,12 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 5
+            "pos": 5,
+            "enchant_time": 5,
+            "value": 5
         },
         {
-            "name": "光之照耀者",
+            "name": "光辉的照耀者",
             "attack": 2,
             "defence": 0,
             "health": 12,
@@ -351,13 +338,60 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 6
+            "pos": 6,
+            "enchant_time": 5,
+            "value": 6
+        },
+        {
+            "name": "齐纳手杖",
+            "attack": 9,
+            "defence": 3,
+            "health": -1,
+            "magic": 12,
+            "critical": 5,
+            "speed": 3,
+            "luck": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 2,
+            "grow_defence": 1,
+            "grow_health": 0,
+            "grow_magic": 2,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "pos": -1,
+            "enchant_time": 5,
+            "value": 5
+        },
+        {
+            "name": "波斯王冠",
+            "attack": 2,
+            "defence": 5,
+            "health": 20,
+            "magic": 20,
+            "critical": 3,
+            "speed": 0,
+            "luck": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 0,
+            "grow_defence": 0,
+            "grow_health": 0,
+            "grow_magic": 0,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "pos": 2,
+            "enchant_time": 5,
+            "value": 5
         }
     ],
     "materials": [
         {
-            "name": "克罗格之舌",
+            "name": "克罗格利的舌头",
             "attack": 3,
             "defence": 0,
             "health": 9,
@@ -365,8 +399,8 @@
             "critical": 2,
             "speed": 0,
             "luck": 0,
-            "num": 0
+            "num": 2,
+            "value": 3
         }
     ]
-    
 }
