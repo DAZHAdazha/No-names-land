@@ -1,6 +1,7 @@
 {
     "plot": 1,
     "money": 0,
+    "baggage": 24,
     "characters": [
         {
             "name": "无名",
@@ -27,7 +28,7 @@
         },
         {
             "name": "轩辕星宇",
-            "attack": 7, 
+            "attack": 7,
             "defence": 10,
             "health": 100,
             "magic": 50,
@@ -80,7 +81,8 @@
             "health": 150,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 4
         },
         {
             "name": "小红药",
@@ -89,7 +91,8 @@
             "health": 50,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 0,
+            "value": 2
         },
         {
             "name": "小蓝药",
@@ -98,7 +101,8 @@
             "health": 0,
             "magic": 50,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 2
         },
         {
             "name": "大蓝药",
@@ -107,7 +111,8 @@
             "health": 0,
             "magic": 150,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 4
         },
         {
             "name": "小攻击药",
@@ -116,17 +121,18 @@
             "health": 0,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 2
         },
         {
-
             "name": "大攻击药",
             "attack": 40,
             "defence": 0,
             "health": 0,
             "magic": 0,
             "speed": 0,
-            "num": 0
+            "num": 2,
+            "value": 4
         }
     ],
     "props": [
@@ -149,9 +155,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
             "pos": 1,
-            "time": 5
+            "enchant_time": 5,
+            "value": 4,
+            "is_wear": false
         },
         {
             "name": "破晓之弓",
@@ -172,9 +179,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
             "pos": 0,
-            "time": 5
+            "enchant_time": 5,
+            "value": 4,
+            "is_wear": false
         },
         {
             "name": "罗伯的眼珠",
@@ -195,9 +203,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
             "pos": 5,
-            "time": 5
+            "enchant_time": 5,
+            "value": 2,
+            "is_wear": false
         },
         {
             "name": "小树枝",
@@ -218,8 +227,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": -1
+            "pos": -1,
+            "enchant_time": 5,
+            "value": 2,
+            "is_wear": false
         },
         {
             "name": "钢盔",
@@ -240,8 +251,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 2
+            "pos": 2,
+            "enchant_time": 5,
+            "value": 2,
+            "is_wear": false
         },
         {
             "name": "黑铁铠甲",
@@ -262,8 +275,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 3
+            "pos": 3,
+            "enchant_time": 5,
+            "value": 3,
+            "is_wear": false
         },
         {
             "name": "廉价的皮鞋",
@@ -284,8 +299,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 4
+            "pos": 4,
+            "enchant_time": 5,
+            "value": 2,
+            "is_wear": false
         },
         {
             "name": "琐罗之戒",
@@ -306,8 +323,10 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 5
+            "pos": 5,
+            "enchant_time": 5,
+            "value": 5,
+            "is_wear": false
         },
         {
             "name": "光之照耀者",
@@ -328,13 +347,63 @@
             "grow_critical": 0,
             "grow_speed": 0,
             "grow_luck": 0,
-            "num": 0,
-            "pos": 6
+            "pos": 6,
+            "enchant_time": 5,
+            "value": 6,
+            "is_wear": false
+        },
+        {
+            "name": "齐纳手杖",
+            "attack": 9,
+            "defence": 3,
+            "health": -1,
+            "magic": 12,
+            "critical": 5,
+            "speed": 3,
+            "luck": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 2,
+            "grow_defence": 1,
+            "grow_health": 0,
+            "grow_magic": 2,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "pos": -1,
+            "enchant_time": 5,
+            "value": 5,
+            "is_wear": false
+        },
+        {
+            "name": "波斯王冠",
+            "attack": 2,
+            "defence": 5,
+            "health": 20,
+            "magic": 20,
+            "critical": 3,
+            "speed": 0,
+            "luck": 0,
+            "level": 1,
+            "exp": 0,
+            "need_exp": 10,
+            "grow_attack": 0,
+            "grow_defence": 0,
+            "grow_health": 0,
+            "grow_magic": 0,
+            "grow_critical": 0,
+            "grow_speed": 0,
+            "grow_luck": 0,
+            "pos": 2,
+            "enchant_time": 5,
+            "value": 5,
+            "is_wear": false
         }
     ],
     "materials": [
         {
-            "name": "克罗格之舌",
+            "name": "克罗格利的舌头",
             "attack": 3,
             "defence": 0,
             "health": 9,
@@ -342,8 +411,8 @@
             "critical": 2,
             "speed": 0,
             "luck": 0,
-            "num": 0
+            "num": 2,
+            "value": 3
         }
     ]
-    
 }
