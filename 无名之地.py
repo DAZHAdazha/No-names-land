@@ -20,37 +20,36 @@ screen = pygame.display.set_mode(size)
 fclock = pygame.time.Clock()
 
 font = pygame.font.Font("ShenYunSuXinTi-2.ttf", 32)
-icon = pygame.image.load("icon.png")
+icon = pygame.image.load("./image/icon.png")
 pygame.display.set_icon(icon)
-character_images = pygame.image.load("角色.png")
+character_images = pygame.image.load("./image/角色.png")
 character_image = character_images.get_rect()
 character_image = character_image.move(width - 60, height - 60)
-bag_images = pygame.image.load("背包.png")
+bag_images = pygame.image.load("./image/背包.png")
 bag_image = bag_images.get_rect()
 bag_image = bag_image.move(width - 120, height - 60)
-achievement_images = pygame.image.load("成就.png")
+achievement_images = pygame.image.load("./image/成就.png")
 achievement_image = achievement_images.get_rect()
 achievement_image = achievement_image.move(width - 180, height - 60)
-shoe_images = pygame.image.load("鞋子.png")
-sword_images = pygame.image.load("剑.png")
-helmet_images = pygame.image.load("头盔.png")
-ring_images = pygame.image.load("戒指.png")
-armor_images = pygame.image.load("护甲.png")
-wand_images = pygame.image.load("法杖.png")
-bow_images = pygame.image.load("弓箭.png")
-title_images = pygame.image.load("称号.png")
-big_health_images = pygame.image.load("大红药.png")
-small_health_images = pygame.image.load("小红药.png")
-big_magic_images = pygame.image.load("大蓝药.png")
-small_magic_images = pygame.image.load("小蓝药.png")
-big_attack_images = pygame.image.load("攻击药剂（大）.png")
-small_attack_images = pygame.image.load("攻击药剂（小）.png")
-material_images = pygame.image.load("材料.png")
+shoe_images = pygame.image.load("./image/鞋子.png")
+sword_images = pygame.image.load("./image/剑.png")
+helmet_images = pygame.image.load("./image/头盔.png")
+ring_images = pygame.image.load("./image/戒指.png")
+armor_images = pygame.image.load("./image/护甲.png")
+wand_images = pygame.image.load("./image/法杖.png")
+bow_images = pygame.image.load("./image/弓箭.png")
+title_images = pygame.image.load("./image/称号.png")
+big_health_images = pygame.image.load("./image/大红药.png")
+small_health_images = pygame.image.load("./image/小红药.png")
+big_magic_images = pygame.image.load("./image/大蓝药.png")
+small_magic_images = pygame.image.load("./image/小蓝药.png")
+big_attack_images = pygame.image.load("./image/攻击药剂（大）.png")
+small_attack_images = pygame.image.load("./image/攻击药剂（小）.png")
+material_images = pygame.image.load("./image/材料.png")
 pygame.display.set_caption("无名之地")
 
 
 class Material:
-
     def __init__(self, name):
         self.name = name
 
@@ -67,7 +66,6 @@ class Material:
 
 
 class Prop:
-
     def __init__(self, name):
         self.name = name
 
@@ -116,7 +114,6 @@ class Prop:
 
 
 class Baggage:
-
     def __init__(self, capacity):
         self.capacity = capacity
         self.objects = []
@@ -138,7 +135,6 @@ class Drug:
 
 
 class Character:
-
     def __init__(self, name):
         self.name = name
 
@@ -395,6 +391,7 @@ def close_window():
     mouse_pressed = pygame.mouse.get_pressed()
     for event in pygame.event.get():  # magic move
         if event.type == pygame.QUIT:  # close the window
+            content['baggage'] = baggage.amount #  put into fileSave
             sys.exit()
     if width - 130 < mouse_pos[0] < width - 100 and 50 < mouse_pos[1] < 80 and mouse_pressed[0] == 1:
         return 1
@@ -562,13 +559,13 @@ while(True):
     mouse_pos = pygame.mouse.get_pos()
     mouse_pressed = pygame.mouse.get_pressed()
     '''return tuple object, which [0] represent left key, [1] for middle, [2] for right'''
-    if (width - 60 < mouse_pos[0] < width and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
+    if width - 60 < mouse_pos[0] < width and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1:
         draw_character()
         draw_window()
-        while(True):
+        while True:
             if close_window() == 1:
                 break
-    if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
+    if width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1:
         """bag"""
 
         for i in range(3):
@@ -579,7 +576,7 @@ while(True):
         ''' put into function'''
         props_num = show_object(baggage)
         draw_window()
-        while (True):
+        while True:
             mouse_pressed = pygame.mouse.get_pressed()
             cur_word_1 = ''
             cur_word_2 = ''
@@ -587,7 +584,7 @@ while(True):
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
                     sale_obj(baggage, baggage.objects[chose_num], content)
-                    time.sleep(0.5)
+                    time.sleep(0.2)  # test
             elif mouse_pressed[0] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
@@ -609,10 +606,10 @@ while(True):
                 break
             pygame.display.update()
             fclock.tick(fps)
-    if (width - 180 < mouse_pos[0] < width - 120 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1):
+    if width - 180 < mouse_pos[0] < width - 120 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1:
         """achievement"""
         draw_window()
-        while (True):
+        while True:
             if close_window() == 1:
                 break
     if (map_x_velocity > 0 and map_choice[0] < width - 10) or (map_x_velocity < 0 and map_choice[0] > 10):
@@ -625,4 +622,3 @@ while(True):
     screen.blit(achievement_images, achievement_image)
     pygame.display.update()
     fclock.tick(fps)
-    content['baggage'] = baggage.amount
