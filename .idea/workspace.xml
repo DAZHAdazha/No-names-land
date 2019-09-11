@@ -3,26 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="81703da7-8065-4880-bd7c-05f66f30deb8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/剑.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/大红药.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/大蓝药.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/头盔.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/小红药.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/小蓝药.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/弓箭.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/成就.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/戒指.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/护甲.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/攻击药剂（大）.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/攻击药剂（小）.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fileSave.json" beforeDir="false" afterPath="$PROJECT_DIR$/fileSave.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/无名之地.py" beforeDir="false" afterPath="$PROJECT_DIR$/无名之地.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/材料.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/法杖.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/称号.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/背包.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/角色.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/鞋子.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,6 +63,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="gamemain" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="untitle" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/game" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/game/gamemain" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="untitle" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -105,6 +108,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.无名之地" />
+        <item itemvalue="Python.gamemain" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>

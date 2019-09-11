@@ -510,6 +510,11 @@ def draw_character():
     show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 - 20))
     show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 - 20))
     show_attr(character_list[2], ((width - 200) / 6 * 5 + 20, height / 2 - 20))
+    for i in range(6):
+        pygame.draw.rect(screen, GREY, (((width - 200) / 6 - 40 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
+        pygame.draw.rect(screen, GREY, (((width - 200) / 2 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
+        pygame.draw.rect(screen, GREY, (((width - 200) / 6 * 5 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)),
+                         4)
     draw_window()
 
 
@@ -531,22 +536,22 @@ refresh_baggage(baggage, prop_list, drugs_list, material_list)
 map_choice = [20, height - 20]
 map_x_velocity = 0
 map_y_velocity = 0
+flag = 0
 
-
-while(True):
+while True:
     screen.fill(CREAM)
     for event in pygame.event.get():  # event list
         if event.type == pygame.QUIT:  # close the window
             sys.exit()
         elif event.type == pygame.KEYDOWN:  # event of press the key
             if event.key == pygame.K_d:
-                map_x_velocity = 1
+                map_x_velocity = 2
             if event.key == pygame.K_s:
-                map_y_velocity = 1
+                map_y_velocity = 2
             if event.key == pygame.K_a:
-                map_x_velocity = -1
+                map_x_velocity = -2
             if event.key == pygame.K_w:
-                map_y_velocity = -1
+                map_y_velocity = -2
         elif event.type == pygame.KEYUP:  # event of release the key
             if event.key == pygame.K_d:
                 map_x_velocity = 0
@@ -565,27 +570,23 @@ while(True):
         while True:
             if close_window() == 1:
                 break
-    if width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1:
+    if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1)\
+            or flag == 1:
         """bag"""
-
         for i in range(3):
             pygame.draw.line(screen, BLACK, (100, 200 + i * 150), (width - 100, 200 + i * 150), 4)
         for i in range(5):
             pygame.draw.line(screen, BLACK, (250 + i * 150, 50), (250 + i * 150, height - 150), 4)
-
         ''' put into function'''
         props_num = show_object(baggage)
         draw_window()
+        flag = 0
         while True:
             mouse_pressed = pygame.mouse.get_pressed()
             cur_word_1 = ''
             cur_word_2 = ''
-            if mouse_pressed[2] == 1:
-                chose_num = click_on_props()
-                if 0 <= chose_num < props_num:
-                    sale_obj(baggage, baggage.objects[chose_num], content)
-                    time.sleep(0.2)  # test
-            elif mouse_pressed[0] == 1:
+            tag = 0
+            if mouse_pressed[0] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
                     pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 800)),)
@@ -603,6 +604,26 @@ while(True):
                 show_words(cur_word_2, (width / 2, height - 70))
             if close_window() == 1:
                 refresh_lists(baggage, prop_list, drugs_list, material_list)
+                break
+            elif mouse_pressed[2] == 1:
+                chose_num = click_on_props()
+                if 0 <= chose_num < props_num:
+                    screen.fill(CREAM)
+                    pygame.draw.line(screen, BLACK, (100, 250), (width - 100, 250), 4)
+                    show_words("售出", (width/2, 150))
+                    draw_window()
+                    while True:
+                        mouse_pressed = pygame.mouse.get_pressed()
+                        if mouse_pressed[0] == 1:
+                            mouse_pos = pygame.mouse.get_pos()
+                            if 100 < mouse_pos[0] < width - 150 and 50 < mouse_pos[1] < 250:
+                                sale_obj(baggage, baggage.objects[chose_num], content)
+                                tag = 1
+                                break
+                        if close_window() == 1:
+                            break
+            if tag == 1:
+                flag = 1
                 break
             pygame.display.update()
             fclock.tick(fps)
