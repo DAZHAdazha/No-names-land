@@ -71,10 +71,10 @@ class Prop:
 
     def create_new_prop(self, attack, defence, health, magic, critical, speed, luck, grow_attack, grow_defence,
                         grow_health, grow_magic, grow_critical, grow_speed, grow_luck, value, pos, level=1,
-                        exp=0, need_exp=10, enchant_time=5, is_wear=False):
+                        exp=0, need_exp=10, enchant_time=5, is_wear=0):
         """type include 1,2,3,4,5,6"""
         """-1 = 法杖， 1 = 剑， 0 = 弓箭, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
-        #  is_wear = True/False
+        #  is_wear = 0,1,2,3 0 for not wearing, 1,2,3 for character 1, 2, 3
         self.level = level
         self.exp = exp
         self.need_exp = need_exp
@@ -208,7 +208,6 @@ def down_file(contents):
     with open('fileSave.json', 'w', encoding='utf-8') as file_object:
         """覆盖原存档"""
         file_object.write(contents)
-        file_object.write(contents)
 
 
 def make_lists(contents, props_list, drug_list, characters_list, materials_list):
@@ -316,13 +315,13 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
         content['materials'].append(dic)
 
 
-def add_prop_character(character, prop):
+def add_prop_character(character, prop, num):
     """人物装备道具"""
     if prop.pos in character.position or prop.is_wear:
         return False
     else:
         character.position.append(prop.pos)
-        prop.is_wear = True
+        prop.is_wear = num
         character.attack += prop.attack
         character.defence += prop.defence
         character.health += prop.health
@@ -335,7 +334,7 @@ def add_prop_character(character, prop):
 def remove_prop_character(character, prop):
     """移除装备"""
     character.position.remove(prop.pos)
-    prop.is_wear = False
+    prop.is_wear = 0
     character.attack -= prop.attack
     character.defence -= prop.defence
     character.health -= prop.health
@@ -392,6 +391,8 @@ def close_window():
     for event in pygame.event.get():  # magic move
         if event.type == pygame.QUIT:  # close the window
             content['baggage'] = baggage.amount #  put into fileSave
+            refresh_content(content, character_list, prop_list, drug_list, material_list)
+            down_file(content)
             sys.exit()
     if width - 130 < mouse_pos[0] < width - 100 and 50 < mouse_pos[1] < 80 and mouse_pressed[0] == 1:
         return 1
@@ -401,7 +402,7 @@ def show_object(baggage):
     item_list_image = []
     j = 0
     for i in baggage.objects:
-        if Prop == type(i):
+        if type(i) == Prop:
             if i.pos == -1:
                 item_list_image.append(wand_images.get_rect())
                 item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
@@ -434,7 +435,7 @@ def show_object(baggage):
                 item_list_image.append(title_images.get_rect())
                 item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
                 screen.blit(title_images, item_list_image[j])
-        elif Drug == type(i):
+        elif type(i) == Drug:
             if i.name == '大红药':
                 item_list_image.append(big_health_images.get_rect())
                 item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
@@ -459,7 +460,7 @@ def show_object(baggage):
                 item_list_image.append(big_attack_images.get_rect())
                 item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
                 screen.blit(big_attack_images, item_list_image[j])
-        elif Material == type(i):
+        elif type(i) == Material:
             item_list_image.append(material_images.get_rect())
             item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
             screen.blit(material_images, item_list_image[j])
@@ -528,11 +529,11 @@ content = load_file()
 baggage = Baggage(content['baggage'])
 is_new(content)
 character_list = []
-drugs_list = []
+drug_list = []
 material_list = []
 prop_list = []
-make_lists(content,  prop_list, drugs_list, character_list, material_list)
-refresh_baggage(baggage, prop_list, drugs_list, material_list)
+make_lists(content,  prop_list, drug_list, character_list, material_list)
+refresh_baggage(baggage, prop_list, drug_list, material_list)
 map_choice = [20, height - 20]
 map_x_velocity = 0
 map_y_velocity = 0
@@ -542,6 +543,8 @@ while True:
     screen.fill(CREAM)
     for event in pygame.event.get():  # event list
         if event.type == pygame.QUIT:  # close the window
+            refresh_content(content, character_list, prop_list, drug_list, material_list)
+            down_file(content)
             sys.exit()
         elif event.type == pygame.KEYDOWN:  # event of press the key
             if event.key == pygame.K_d:
@@ -573,6 +576,7 @@ while True:
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1)\
             or flag == 1:
         """bag"""
+        show_words("金钱：" + str(content['money']), (width / 2, 30))
         for i in range(3):
             pygame.draw.line(screen, BLACK, (100, 200 + i * 150), (width - 100, 200 + i * 150), 4)
         for i in range(5):
@@ -582,10 +586,14 @@ while True:
         draw_window()
         flag = 0
         while True:
+            if close_window() == 1:
+                refresh_lists(baggage, prop_list, drug_list, material_list)
+                break
             mouse_pressed = pygame.mouse.get_pressed()
             cur_word_1 = ''
             cur_word_2 = ''
             tag = 0
+
             if mouse_pressed[0] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
@@ -602,15 +610,17 @@ while True:
                                     cur_word_2 += translate(str(i)) + ':' + str(obj[i]) + ' '
                 show_words(cur_word_1, (width / 2, height - 120))
                 show_words(cur_word_2, (width / 2, height - 70))
-            if close_window() == 1:
-                refresh_lists(baggage, prop_list, drugs_list, material_list)
-                break
+
             elif mouse_pressed[2] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
                     screen.fill(CREAM)
                     pygame.draw.line(screen, BLACK, (100, 250), (width - 100, 250), 4)
-                    show_words("售出", (width/2, 150))
+                    pygame.draw.line(screen, BLACK, (100, 450), (width - 100, 450), 4)
+                    pygame.draw.line(screen, BLACK, (100, 650), (width - 100, 650), 4)
+                    show_words("售出", (width / 2, 150))
+                    show_words("强化", (width / 2, 350))
+                    show_words("附魔", (width / 2, 550))
                     draw_window()
                     while True:
                         mouse_pressed = pygame.mouse.get_pressed()
@@ -618,6 +628,7 @@ while True:
                             mouse_pos = pygame.mouse.get_pos()
                             if 100 < mouse_pos[0] < width - 150 and 50 < mouse_pos[1] < 250:
                                 sale_obj(baggage, baggage.objects[chose_num], content)
+                                refresh_lists(baggage, prop_list, drug_list, material_list)
                                 tag = 1
                                 break
                         if close_window() == 1:
