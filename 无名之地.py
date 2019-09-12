@@ -20,6 +20,7 @@ screen = pygame.display.set_mode(size)
 fclock = pygame.time.Clock()
 
 font = pygame.font.Font("ShenYunSuXinTi-2.ttf", 32)
+font_small = pygame.font.Font("ShenYunSuXinTi-2.ttf", 20)
 icon = pygame.image.load("./image/icon.png")
 pygame.display.set_icon(icon)
 character_images = pygame.image.load("./image/角色.png")
@@ -247,8 +248,8 @@ def show_lines(lines, t):
         time.sleep(t)
 
 
-def show_words(words, coord):
-    texts = font.render(words, True, BLACK)
+def show_words(words, coord, font, color):
+    texts = font.render(words, True, color)
     text = texts.get_rect()
     text.center = (coord[0], coord[1])
     screen.blit(texts, text)
@@ -256,16 +257,16 @@ def show_words(words, coord):
 
 def show_attr(character, coord):
     """change 'attack...' to '攻击' """
-    show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord[1]))
-    show_words('攻击:' + str(character.attack), (coord[0], coord[1] + 50))
-    show_words('防御:' + str(character.defence), (coord[0] + 145, coord[1] + 50))
-    show_words('生命:' + str(character.health), (coord[0], coord[1] + 100))
-    show_words('魔法:' + str(character.magic), (coord[0] + 145, coord[1] + 100))
-    show_words('暴击:' + str(character.critical), (coord[0], coord[1] + 150))
-    show_words('速度:' + str(character.speed), (coord[0] + 145, coord[1] + 150))
-    show_words('幸运:' + str(character.luck), (coord[0], coord[1] + 200))
-    show_words('洞视:' + str(character.insight), (coord[0] + 145, coord[1] + 200))
-    show_words('等级:' + str(character.level), (coord[0], coord[1] + 250))
+    show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord[1]), font, BLACK)
+    show_words('攻击:' + str(character.attack), (coord[0], coord[1] + 50), font, BLACK)
+    show_words('防御:' + str(character.defence), (coord[0] + 145, coord[1] + 50), font, BLACK)
+    show_words('生命:' + str(character.health), (coord[0], coord[1] + 100), font, BLACK)
+    show_words('魔法:' + str(character.magic), (coord[0] + 145, coord[1] + 100), font, BLACK)
+    show_words('暴击:' + str(character.critical), (coord[0], coord[1] + 150), font, BLACK)
+    show_words('速度:' + str(character.speed), (coord[0] + 145, coord[1] + 150), font, BLACK)
+    show_words('幸运:' + str(character.luck), (coord[0], coord[1] + 200), font, BLACK)
+    show_words('洞视:' + str(character.insight), (coord[0] + 145, coord[1] + 200), font, BLACK)
+    show_words('等级:' + str(character.level), (coord[0], coord[1] + 250), font, BLACK)
     """one more attr"""
 
 
@@ -317,18 +318,21 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
 
 def add_prop_character(character, prop, num):
     """人物装备道具"""
-    if prop.pos in character.position or prop.is_wear:
+    if prop.is_wear:
         return False
-    else:
-        character.position.append(prop.pos)
-        prop.is_wear = num
-        character.attack += prop.attack
-        character.defence += prop.defence
-        character.health += prop.health
-        character.magic += prop.magic
-        character.critical += prop.critical
-        character.speed += prop.speed
-        character.luck += prop.luck
+    for i in character.position:
+        if prop.pos == i.pos:
+            character.position.remove(i)
+            i.is_wear = 0
+    character.position.append(prop)
+    prop.is_wear = num
+    character.attack += prop.attack
+    character.defence += prop.defence
+    character.health += prop.health
+    character.magic += prop.magic
+    character.critical += prop.critical
+    character.speed += prop.speed
+    character.luck += prop.luck
 
 
 def remove_prop_character(character, prop):
@@ -435,6 +439,12 @@ def show_object(baggage):
                 item_list_image.append(title_images.get_rect())
                 item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
                 screen.blit(title_images, item_list_image[j])
+            if i.is_wear > 0:
+                pygame.draw.line(screen, RED, (j % 6 * 150 + 115, j // 6 * 150 + 65), (j % 6 * 150 + 125, j // 6 * 150
+                                                                                       + 75), 4)
+                pygame.draw.line(screen, RED, (j % 6 * 150 + 125, j // 6 * 150 + 75), (j % 6 * 150 + 145, j // 6 * 150
+                                                                                       + 55), 4)
+                show_words(str(character_list[i.is_wear - 1].name), (j % 6 * 150 + 190, j // 6 * 150 + 60), font_small, GREY)
         elif type(i) == Drug:
             if i.name == '大红药':
                 item_list_image.append(big_health_images.get_rect())
@@ -464,7 +474,7 @@ def show_object(baggage):
             item_list_image.append(material_images.get_rect())
             item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
             screen.blit(material_images, item_list_image[j])
-        show_words(i.name, (j % 6 * 150 + 180, j // 6 * 150 + 150))
+        show_words(i.name, (j % 6 * 150 + 180, j // 6 * 150 + 150), font, BLACK)
         j += 1
     return len(item_list_image)
 
@@ -482,13 +492,13 @@ def click_on_props():
 def translate(str):
     translator = {'name': '名称', 'attack': '攻击', 'defence': '防御', 'health': '生命', 'magic': '魔法', 'critical': '暴击',
                   'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'enchant_time': '可附魔次数',
-                  'value': '价格'}  # time change
+                  'value': '价格'}
     return translator[str]
 
 
 def sale_obj(baggage, obj, contents):
     """卖出物品"""
-    contents['money'] += obj.value  # value是物品的价值
+    contents['money'] += obj.value
     if Prop == type(obj):
         baggage.objects.remove(obj)
     else:
@@ -505,9 +515,9 @@ def draw_character():
     pygame.draw.line(screen, GREY, (100, height / 2 - 50), (width - 100, height / 2 - 50), 4)
     pygame.draw.line(screen, BLACK, ((width - 200) / 3 + 100, 50), ((width - 200) / 3 + 100, height - 150), 4)
     pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 105, 50), ((width - 200) / 1.5 + 105, height - 150), 4)
-    show_words(character_list[0].name, ((width - 200) / 6 + 100, 100))
-    show_words(character_list[1].name, ((width - 200) / 2 + 100, 100))
-    show_words(character_list[2].name, ((width - 200) / 6 * 5 + 100, 100))
+    show_words(character_list[0].name, ((width - 200) / 6 + 100, 100), font, BLACK)
+    show_words(character_list[1].name, ((width - 200) / 2 + 100, 100), font, BLACK)
+    show_words(character_list[2].name, ((width - 200) / 6 * 5 + 100, 100), font, BLACK)
     show_attr(character_list[0], ((width - 200) / 6 + 20, height / 2 - 20))
     show_attr(character_list[1], ((width - 200) / 2 + 20, height / 2 - 20))
     show_attr(character_list[2], ((width - 200) / 6 * 5 + 20, height / 2 - 20))
@@ -575,8 +585,9 @@ while True:
                 break
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1)\
             or flag == 1:
+        print(flag)
         """bag"""
-        show_words("金钱：" + str(content['money']), (width / 2, 30))
+        show_words("金钱：" + str(content['money']), (width / 2, 30), font, BLACK)
         for i in range(3):
             pygame.draw.line(screen, BLACK, (100, 200 + i * 150), (width - 100, 200 + i * 150), 4)
         for i in range(5):
@@ -593,7 +604,6 @@ while True:
             cur_word_1 = ''
             cur_word_2 = ''
             tag = 0
-
             if mouse_pressed[0] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
@@ -608,31 +618,55 @@ while True:
                                     word_len += 1
                                 else:
                                     cur_word_2 += translate(str(i)) + ':' + str(obj[i]) + ' '
-                show_words(cur_word_1, (width / 2, height - 120))
-                show_words(cur_word_2, (width / 2, height - 70))
-
+                show_words(cur_word_1, (width / 2, height - 120), font, BLACK)
+                show_words(cur_word_2, (width / 2, height - 70), font, BLACK)
             elif mouse_pressed[2] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
-                    screen.fill(CREAM)
-                    pygame.draw.line(screen, BLACK, (100, 250), (width - 100, 250), 4)
-                    pygame.draw.line(screen, BLACK, (100, 450), (width - 100, 450), 4)
-                    pygame.draw.line(screen, BLACK, (100, 650), (width - 100, 650), 4)
-                    show_words("售出", (width / 2, 150))
-                    show_words("强化", (width / 2, 350))
-                    show_words("附魔", (width / 2, 550))
-                    draw_window()
-                    while True:
-                        mouse_pressed = pygame.mouse.get_pressed()
-                        if mouse_pressed[0] == 1:
-                            mouse_pos = pygame.mouse.get_pos()
-                            if 100 < mouse_pos[0] < width - 150 and 50 < mouse_pos[1] < 250:
-                                sale_obj(baggage, baggage.objects[chose_num], content)
-                                refresh_lists(baggage, prop_list, drug_list, material_list)
-                                tag = 1
-                                break
-                        if close_window() == 1:
-                            break
+                    chose_num = click_on_props()
+                    if type(baggage.objects[chose_num]) == Material or type(baggage.objects[chose_num]) == Drug:
+                        sale_obj(baggage, baggage.objects[chose_num], content)
+                        refresh_lists(baggage, prop_list, drug_list, material_list)
+                        time.sleep(0.2)
+                        flag = 1
+                        break
+                    else:
+                            screen.fill(CREAM)
+                            pygame.draw.line(screen, BLACK, (100, 450), (width - 100, 450), 4)
+                            pygame.draw.line(screen, BLACK, ((width - 200) / 3 + 100, 50),((width - 200) / 3 + 100, 650), 4)
+                            pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 100, 50),((width - 200) / 1.5 + 100, 650), 4)
+                            show_words("售出", ((width - 200) / 3 - 50, 250), font, BLACK)
+                            show_words("强化", (width / 2, 250), font, BLACK)
+                            show_words("附魔", ((width - 200) / 1.5 + 250, 250), font, BLACK)
+                            show_words("装备于" + str(character_list[0].name), ((width - 200) / 3 - 50, 550), font, BLACK)
+                            show_words("装备于" + str(character_list[1].name), (width / 2, 550), font, BLACK)
+                            show_words("装备于" + str(character_list[2].name), ((width - 200) / 1.5 + 250, 550), font, BLACK)
+                            draw_window()
+                            while True:
+                                mouse_pressed = pygame.mouse.get_pressed()
+
+                                if mouse_pressed[0] == 1:
+                                    mouse_pos = pygame.mouse.get_pos()
+                                    if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 50 < mouse_pos[1] < 450:
+                                        sale_obj(baggage, baggage.objects[chose_num], content)
+                                        refresh_lists(baggage, prop_list, drug_list, material_list)
+                                        refresh_baggage(baggage, prop_list, drug_list, material_list)
+                                        tag = 1
+                                        break
+                                    if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 450 < mouse_pos[1] < 650:
+                                        add_prop_character(character_list[0], baggage.objects[chose_num], 1)
+                                        tag = 1
+                                        break
+                                    elif (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 450 < mouse_pos[1] < 650:
+                                        add_prop_character(character_list[1], baggage.objects[chose_num], 2)
+                                        tag = 1
+                                        break
+                                    elif (width - 200) / 1.5 + 100 < mouse_pos[0] < width - 100 and 450 < mouse_pos[1] < 650:
+                                        add_prop_character(character_list[2], baggage.objects[chose_num], 3)
+                                        tag = 1
+                                        break
+                                if close_window() == 1:
+                                    break
             if tag == 1:
                 flag = 1
                 break
