@@ -213,16 +213,26 @@ def down_file(contents):
 
 def make_lists(contents, props_list, drug_list, characters_list, materials_list):
     """存档变列表"""
-    for i in contents['characters']:
-        ch = Character(i['name'])
-        ch.create_new_character(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'],
-                                i['insight'], i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'],
-                                i['grow_critical'], i['grow_speed'], i['grow_luck'], i['grow_insight'], i['level'],
-                                i['exp'], i['need_exp'], i['position'])
+    for j in contents['characters']:
+        ch = Character(j['name'])
+        ch_prop = []
+        for i in j['position']:
+            prop = Prop(i['name'])
+            prop.create_new_prop(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'],
+                                 i['luck'],
+                                 i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'],
+                                 i['grow_critical'],
+                                 i['grow_speed'], i['grow_luck'], i['value'], i['pos'], i['level'], i['exp'],
+                                 i['need_exp'], i['enchant_time'], i['is_wear'])
+            ch_prop.append(prop)
+        ch.create_new_character(j['attack'], j['defence'], j['health'], j['magic'], j['critical'], j['speed'], j['luck'],
+                                j['insight'], j['grow_attack'], j['grow_defence'], j['grow_health'], j['grow_magic'],
+                                j['grow_critical'], j['grow_speed'], j['grow_luck'], j['grow_insight'], j['level'],
+                                j['exp'], j['need_exp'], ch_prop)
         characters_list.append(ch)
     for i in contents['props']:
         prop = Prop(i['name'])
-        prop.create_new_prop(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'],i['luck'],
+        prop.create_new_prop(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'],
                              i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'], i['grow_critical'],
                              i['grow_speed'], i['grow_luck'], i['value'], i['pos'], i['level'], i['exp'],
                              i['need_exp'], i['enchant_time'], i['is_wear'])
@@ -236,6 +246,7 @@ def make_lists(contents, props_list, drug_list, characters_list, materials_list)
         material.create_new_material(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'],
                                      i['luck'], i['num'], i['value'])
         materials_list.append(material)
+
 
 
 def show_lines(lines, t):
@@ -297,6 +308,16 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
                'grow_attack': i.grow_attack, 'grow_defence': i.grow_defence, 'grow_health': i.grow_health,
                'grow_magic': i.grow_magic, 'grow_critical': i.grow_critical, 'grow_speed': i.grow_speed,
                'grow_luck': i.grow_luck, 'grow_insight': i.grow_insight, 'position': i.position}
+        prop_dic = []
+        for j in dic['position']:
+            prop= {'name': j.name, 'attack': j.attack, 'defence': j.defence, 'health': j.health, 'magic': j.magic,
+                        'critical': j.critical, 'speed': j.speed, 'luck': j.luck, 'level': j.level,'exp': j.exp,
+                        'need_exp': j.need_exp, 'grow_attack': j.grow_attack, 'grow_defence': j.grow_defence,
+                        'grow_health': j.grow_health, 'grow_magic': j.grow_magic, 'grow_critical': j.grow_critical,
+                        'grow_speed': j.grow_speed, 'grow_luck': j.grow_luck, 'pos': j.pos, 'value': j.value,
+                        'is_wear': j.is_wear, 'enchant_time': j.enchant_time}
+            prop_dic.append(prop)
+        dic['position'] = prop_dic
         content['characters'].append(dic)
     for i in drug_list:
         dic = {'name': i.name, 'attack': i.attack, 'defence': i.defence, 'health': i.health,
@@ -318,34 +339,44 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
 
 def add_prop_character(character, prop, num):
     """人物装备道具"""
-    if prop.is_wear:
-        return False
     for i in character.position:
-        if prop.pos == i.pos:
-            character.position.remove(i)
-            i.is_wear = 0
+        print(i.pos)
+        if prop.pos <= 1:
+            if i.pos <= 1:
+                remove_prop_character(character, i)
+                break
+        else:
+            if i.pos == prop.pos:
+                remove_prop_character(character, i)
+                break
+    if prop.is_wear != 0:
+        remove_prop_character(character_list[prop.is_wear-1], prop)
     character.position.append(prop)
     prop.is_wear = num
-    character.attack += prop.attack
-    character.defence += prop.defence
-    character.health += prop.health
-    character.magic += prop.magic
-    character.critical += prop.critical
-    character.speed += prop.speed
-    character.luck += prop.luck
+    for i in prop_list:
+        if i.name == prop.name:
+            i.is_wear = prop.is_wear
+    refresh_baggage(baggage, prop_list, drug_list, material_list)
 
 
 def remove_prop_character(character, prop):
     """移除装备"""
-    character.position.remove(prop.pos)
+    print(character.name)
+    for i in character.position:
+        print(i.name)
+    print()
+    character.position.remove(prop)
     prop.is_wear = 0
+    for i in prop_list:
+        if i.name == prop.name:
+            i.is_wear = 0
     character.attack -= prop.attack
     character.defence -= prop.defence
     character.health -= prop.health
     character.magic -= prop.magic
     character.critical -= prop.critical
-    character.speed -= prop.speed
     character.luck -= prop.luck
+    character.speed -= prop.speed
 
 
 def strengthen_prop(prop1, prop2):
@@ -524,8 +555,47 @@ def draw_character():
     for i in range(6):
         pygame.draw.rect(screen, GREY, (((width - 200) / 6 - 40 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
         pygame.draw.rect(screen, GREY, (((width - 200) / 2 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
-        pygame.draw.rect(screen, GREY, (((width - 200) / 6 * 5 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)),
-                         4)
+        pygame.draw.rect(screen, GREY, (((width - 200) / 6 * 5 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
+    item_list_image = []
+    k = 0
+    for i in range(3):
+        for j in range(6):
+            if j < len(character_list[i].position):
+                if character_list[i].position[j].pos == -1:
+                    item_list_image.append(wand_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(wand_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 0:
+                    item_list_image.append(bow_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(bow_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 1:
+                    item_list_image.append(sword_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(sword_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 2:
+                    item_list_image.append(helmet_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(helmet_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 3:
+                    item_list_image.append(armor_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(armor_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 4:
+                    item_list_image.append(shoe_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(shoe_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 5:
+                    item_list_image.append(ring_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(ring_images, item_list_image[k])
+                elif character_list[i].position[j].pos == 6:
+                    item_list_image.append(title_images.get_rect())
+                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
+                    screen.blit(title_images, item_list_image[k])
+                show_words(str(character_list[i].position[j].name), ((width - 200) / 6 + 97 * (j % 3) + i * 300, 340 if j > 2 else 230),
+                           font_small, RED)
+                k += 1
     draw_window()
 
 
@@ -578,6 +648,7 @@ while True:
     mouse_pressed = pygame.mouse.get_pressed()
     '''return tuple object, which [0] represent left key, [1] for middle, [2] for right'''
     if width - 60 < mouse_pos[0] < width and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1:
+        '''character'''
         draw_character()
         draw_window()
         while True:
@@ -585,7 +656,6 @@ while True:
                 break
     if (width - 120 < mouse_pos[0] < width - 60 and height - 60 < mouse_pos[1] < height and mouse_pressed[0] == 1)\
             or flag == 1:
-        print(flag)
         """bag"""
         show_words("金钱：" + str(content['money']), (width / 2, 30), font, BLACK)
         for i in range(3):
