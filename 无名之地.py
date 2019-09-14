@@ -66,14 +66,10 @@ class Material:
             self.value = value
 
 
-class Prop:
-    def __init__(self, name):
-        self.name = name
-
     def create_new_prop(self, attack, defence, health, magic, critical, speed, luck, grow_attack, grow_defence,
                         grow_health, grow_magic, grow_critical, grow_speed, grow_luck, value, pos, level=1,
-                        exp=0, need_exp=10, enchant_time=5, is_wear=0):
-        """type include 1,2,3,4,5,6"""
+                        exp=0, need_exp=10, enchant_time=5, is_wear=0, numb=1):
+        """numb 表示此装备的序列号"""
         """-1 = 法杖， 1 = 剑， 0 = 弓箭, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
         #  is_wear = 0,1,2,3 0 for not wearing, 1,2,3 for character 1, 2, 3
         self.level = level
@@ -97,6 +93,7 @@ class Prop:
         self.luck = luck
         self.is_wear = is_wear
         self.value = value
+        self.numb = numb
 
     def up_level(self, exp):
         self.exp += exp
@@ -223,7 +220,7 @@ def make_lists(contents, props_list, drug_list, characters_list, materials_list)
                                  i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'],
                                  i['grow_critical'],
                                  i['grow_speed'], i['grow_luck'], i['value'], i['pos'], i['level'], i['exp'],
-                                 i['need_exp'], i['enchant_time'], i['is_wear'])
+                                 i['need_exp'], i['enchant_time'], i['is_wear'], i['numb'])
             ch_prop.append(prop)
         ch.create_new_character(j['attack'], j['defence'], j['health'], j['magic'], j['critical'], j['speed'], j['luck'],
                                 j['insight'], j['grow_attack'], j['grow_defence'], j['grow_health'], j['grow_magic'],
@@ -235,7 +232,7 @@ def make_lists(contents, props_list, drug_list, characters_list, materials_list)
         prop.create_new_prop(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'], i['luck'],
                              i['grow_attack'], i['grow_defence'], i['grow_health'], i['grow_magic'], i['grow_critical'],
                              i['grow_speed'], i['grow_luck'], i['value'], i['pos'], i['level'], i['exp'],
-                             i['need_exp'], i['enchant_time'], i['is_wear'])
+                             i['need_exp'], i['enchant_time'], i['is_wear'], i['numb'])
         props_list.append(prop)
     for i in contents['drug']:
         drug = Drug(i['name'])
@@ -315,7 +312,7 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
                         'need_exp': j.need_exp, 'grow_attack': j.grow_attack, 'grow_defence': j.grow_defence,
                         'grow_health': j.grow_health, 'grow_magic': j.grow_magic, 'grow_critical': j.grow_critical,
                         'grow_speed': j.grow_speed, 'grow_luck': j.grow_luck, 'pos': j.pos, 'value': j.value,
-                        'is_wear': j.is_wear, 'enchant_time': j.enchant_time}
+                        'is_wear': j.is_wear, 'enchant_time': j.enchant_time, 'numb': j.numb}
             prop_dic.append(prop)
         dic['position'] = prop_dic
         content['characters'].append(dic)
@@ -329,7 +326,7 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
                'exp': i.exp, 'need_exp': i.need_exp, 'grow_attack': i.grow_attack, 'grow_defence': i.grow_defence,
                'grow_health': i.grow_health, 'grow_magic': i.grow_magic, 'grow_critical': i.grow_critical,
                'grow_speed': i.grow_speed, 'grow_luck': i.grow_luck, 'pos': i.pos, 'value': i.value,
-               'is_wear': i.is_wear, 'enchant_time': i.enchant_time}
+               'is_wear': i.is_wear, 'enchant_time': i.enchant_time, 'numb': i.numb}
         content['props'].append(dic)
     for i in materials_list:
         dic = {'name': i.name, 'attack': i.attack, 'defence': i.defence, 'health': i.health, 'critical': i.critical,
@@ -339,8 +336,14 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
 
 def add_prop_character(character, prop, num):
     """人物装备道具"""
+    character.attack += prop.attack
+    character.defence += prop.defence
+    character.health += prop.health
+    character.magic += prop.magic
+    character.critical += prop.critical
+    character.luck += prop.luck
+    character.speed += prop.speed
     for i in character.position:
-        print(i.pos)
         if prop.pos <= 1:
             if i.pos <= 1:
                 remove_prop_character(character, i)
@@ -354,21 +357,26 @@ def add_prop_character(character, prop, num):
     character.position.append(prop)
     prop.is_wear = num
     for i in prop_list:
-        if i.name == prop.name:
+        if i.name == prop.name and i.numb == prop.numb:
             i.is_wear = prop.is_wear
+    for i in character_list:
+        if i.name == character.name:
+            i.position = character.position
     refresh_baggage(baggage, prop_list, drug_list, material_list)
 
 
 def remove_prop_character(character, prop):
     """移除装备"""
-    print(character.name)
     for i in character.position:
-        print(i.name)
-    print()
-    character.position.remove(prop)
-    prop.is_wear = 0
-    for i in prop_list:
         if i.name == prop.name:
+            character.position.remove(i)
+    prop.is_wear = 0
+    for i in character_list:
+        if i.name == character.name:
+            i.position = character.position
+    refresh_baggage(baggage, prop_list, drug_list, material_list)
+    for i in prop_list:
+        if i.name == prop.name and i.numb == prop.numb:
             i.is_wear = 0
     character.attack -= prop.attack
     character.defence -= prop.defence
@@ -382,19 +390,39 @@ def remove_prop_character(character, prop):
 def strengthen_prop(prop1, prop2):
     """强化装备"""
     prop1.up_level(prop2.value)
+    if prop2.is_wear != 0:
+        remove_prop_character(character_list[prop2.is_wear], prop2)
+    for i in prop_list:
+        if i.name == prop2.name and i.numb == prop2.numb:
+            prop_list.remove(i)
 
 
 def enchant_prop(prop, material):
     """附魔装备"""
-    prop.enchant_time -= 1
-    prop.attack += material.attack
-    prop.defence += material.defence
-    prop.health += material.health
-    prop.magic += material.magic
-    prop.critical += material.critical
-    prop.speed += material.speed
-    prop.luck += material.luck
-    prop.value += material.value//2
+    for i in prop_list:
+        if i.name == prop.name and i.numb == prop.numb:
+            i.enchant_time -= 1
+            i.attack += material.attack
+            i.defence += material.defence
+            i.health += material.health
+            i.magic += material.magic
+            i.critical += material.critical
+            i.speed += material.speed
+            i.luck += material.luck
+            i.value += material.value // 2
+    if prop.is_wear != 0:
+        for i in character_list[prop.is_wear - 1].position:
+            if i.name == prop.name and i.numb == prop.numb:
+                i.enchant_time = prop.enchant_time
+                i.attack = prop.attack
+                i.defence = prop.defence
+                i.health = prop.health
+                i.magic = prop.magic
+                i.critical = prop.critical
+                i.speed = prop.speed
+                i.luck = prop.luck
+                i.value = prop.value
+    refresh_baggage(baggage, prop_list, drug_list, material_list)
 
 
 def is_new(contents):
@@ -681,7 +709,7 @@ while True:
                     word_len = 0
                     obj = vars(baggage.objects[chose_num])
                     for i in obj:
-                        if not re.findall('(^grow|^need|pos|exp|is_wear)', str(i)):
+                        if not re.findall('(^grow|^need|pos|exp|is_wear|numb)', str(i)):
                             if obj[i] != 0:
                                 if word_len < 6:
                                     cur_word_1 += translate(str(i)) + ':' + str(obj[i]) + ' '
