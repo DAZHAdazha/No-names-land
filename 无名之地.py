@@ -65,7 +65,6 @@ class Material:
             self.num = num
             self.value = value
 
-
     def create_new_prop(self, attack, defence, health, magic, critical, speed, luck, grow_attack, grow_defence,
                         grow_health, grow_magic, grow_critical, grow_speed, grow_luck, value, pos, level=1,
                         exp=0, need_exp=10, enchant_time=5, is_wear=0, numb=1):
@@ -116,6 +115,55 @@ class Baggage:
         self.capacity = capacity
         self.objects = []
         self.amount = 0
+
+
+class Prop:
+    def __init__(self, name):
+        self.name = name
+
+    def create_new_prop(self, attack, defence, health, magic, critical, speed, luck, grow_attack, grow_defence,
+                        grow_health, grow_magic, grow_critical, grow_speed, grow_luck, value, pos, level=1,
+                        exp=0, need_exp=10, enchant_time=5, is_wear=0, numb=1):
+        """numb 表示此装备的序列号"""
+        """-1 = 法杖， 1 = 剑， 0 = 弓箭, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
+        #  is_wear = 0,1,2,3 0 for not wearing, 1,2,3 for character 1, 2, 3
+        self.level = level
+        self.exp = exp
+        self.need_exp = need_exp
+        self.pos = pos
+        self.enchant_time = enchant_time  # 剩余的附魔次数
+        self.grow_attack = grow_attack
+        self.grow_defence = grow_defence
+        self.grow_health = grow_health
+        self.grow_magic = grow_magic
+        self.grow_critical = grow_critical
+        self.grow_speed = grow_speed
+        self.grow_luck = grow_luck
+        self.attack = attack
+        self.defence = defence
+        self.health = health
+        self.magic = magic
+        self.critical = critical
+        self.speed = speed
+        self.luck = luck
+        self.is_wear = is_wear
+        self.value = value
+        self.numb = numb
+
+    def up_level(self, exp):
+        self.exp += exp
+        while self.exp >= self.need_exp:
+            self.value += 1
+            self.level += 1
+            self.exp = self.exp - self.need_exp
+            self.need_exp *= 1.5
+            self.attack += self.grow_attack
+            self.defence += self.grow_defence
+            self.health += self.grow_health
+            self.magic += self.grow_magic
+            self.critical += self.grow_critical
+            self.speed += self.grow_speed
+            self.luck += self.grow_luck
 
 
 class Drug:
@@ -245,7 +293,6 @@ def make_lists(contents, props_list, drug_list, characters_list, materials_list)
         materials_list.append(material)
 
 
-
 def show_lines(lines, t):
     for i in range(len(lines)):
         texts = font.render(lines[i], True, BLACK)
@@ -264,7 +311,6 @@ def show_words(words, coord, font, color):
 
 
 def show_attr(character, coord):
-    """change 'attack...' to '攻击' """
     show_words('经验:' + str(character.exp) + '/' + str(character.need_exp), (coord[0] + 72, coord[1]), font, BLACK)
     show_words('攻击:' + str(character.attack), (coord[0], coord[1] + 50), font, BLACK)
     show_words('防御:' + str(character.defence), (coord[0] + 145, coord[1] + 50), font, BLACK)
@@ -275,7 +321,6 @@ def show_attr(character, coord):
     show_words('幸运:' + str(character.luck), (coord[0], coord[1] + 200), font, BLACK)
     show_words('洞视:' + str(character.insight), (coord[0] + 145, coord[1] + 200), font, BLACK)
     show_words('等级:' + str(character.level), (coord[0], coord[1] + 250), font, BLACK)
-    """one more attr"""
 
 
 def refresh_lists(baggage, props_list, drug_list, materials_list):
@@ -453,7 +498,7 @@ def close_window():
     mouse_pressed = pygame.mouse.get_pressed()
     for event in pygame.event.get():  # magic move
         if event.type == pygame.QUIT:  # close the window
-            content['baggage'] = baggage.amount #  put into fileSave
+            content['baggage'] = baggage.amount  # put into fileSave
             refresh_content(content, character_list, prop_list, drug_list, material_list)
             down_file(content)
             sys.exit()
@@ -461,75 +506,35 @@ def close_window():
         return 1
 
 
+def show_image(item_list_image, coord, id, num):
+    dic = {'-1': wand_images, '0': bow_images, '1': sword_images, '2': helmet_images, '3': armor_images,
+           '4': shoe_images, '5': ring_images, '6': title_images, '大红药': big_health_images,
+           '小红药': small_health_images, '大蓝药': big_magic_images, '小蓝药': small_magic_images,
+           '小攻击药': small_attack_images, '大攻击药': big_attack_images}
+    item_list_image.append(dic[id].get_rect())
+    item_list_image[num] = item_list_image[num].move(coord)
+    screen.blit(dic[id], item_list_image[num])
+    return item_list_image
+
+
 def show_object(baggage):
     item_list_image = []
     j = 0
     for i in baggage.objects:
+        coord = j % 6 * 150 + 150, j // 6 * 150 + 70
         if type(i) == Prop:
-            if i.pos == -1:
-                item_list_image.append(wand_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(wand_images, item_list_image[j])
-            elif i.pos == 0:
-                item_list_image.append(bow_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(bow_images, item_list_image[j])
-            elif i.pos == 1:
-                item_list_image.append(sword_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(sword_images, item_list_image[j])
-            elif i.pos == 2:
-                item_list_image.append(helmet_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(helmet_images, item_list_image[j])
-            elif i.pos == 3:
-                item_list_image.append(armor_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(armor_images, item_list_image[j])
-            elif i.pos == 4:
-                item_list_image.append(shoe_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(shoe_images, item_list_image[j])
-            elif i.pos == 5:
-                item_list_image.append(ring_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(ring_images, item_list_image[j])
-            elif i.pos == 6:
-                item_list_image.append(title_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(title_images, item_list_image[j])
+            item_list_image = show_image(item_list_image, coord, str(i.pos), j)
             if i.is_wear > 0:
                 pygame.draw.line(screen, RED, (j % 6 * 150 + 115, j // 6 * 150 + 65), (j % 6 * 150 + 125, j // 6 * 150
                                                                                        + 75), 4)
                 pygame.draw.line(screen, RED, (j % 6 * 150 + 125, j // 6 * 150 + 75), (j % 6 * 150 + 145, j // 6 * 150
                                                                                        + 55), 4)
-                show_words(str(character_list[i.is_wear - 1].name), (j % 6 * 150 + 190, j // 6 * 150 + 60), font_small, GREY)
+                show_words(str(character_list[i.is_wear - 1].name),
+                           (j % 6 * 150 + 190, j // 6 * 150 + 60), font_small, GREY)
         elif type(i) == Drug:
-            if i.name == '大红药':
-                item_list_image.append(big_health_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(big_health_images, item_list_image[j])
-            elif i.name == '小红药':
-                item_list_image.append(small_health_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(small_health_images, item_list_image[j])
-            elif i.name == '大蓝药':
-                item_list_image.append(big_magic_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(big_magic_images, item_list_image[j])
-            elif i.name == '小蓝药':
-                item_list_image.append(small_magic_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(small_magic_images, item_list_image[j])
-            elif i.name == '小攻击药':
-                item_list_image.append(small_attack_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(small_attack_images, item_list_image[j])
-            elif i.name == '大攻击药':
-                item_list_image.append(big_attack_images.get_rect())
-                item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-                screen.blit(big_attack_images, item_list_image[j])
+            item_list_image = show_image(item_list_image, coord, str(i.name), j)
         elif type(i) == Material:
+            '''change into upper form'''
             item_list_image.append(material_images.get_rect())
             item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
             screen.blit(material_images, item_list_image[j])
@@ -548,11 +553,11 @@ def click_on_props():
         return -1
 
 
-def translate(str):
+def translate(word):
     translator = {'name': '名称', 'attack': '攻击', 'defence': '防御', 'health': '生命', 'magic': '魔法', 'critical': '暴击',
                   'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'enchant_time': '可附魔次数',
                   'value': '价格'}
-    return translator[str]
+    return translator[word]
 
 
 def sale_obj(baggage, obj, contents):
@@ -583,45 +588,17 @@ def draw_character():
     for i in range(6):
         pygame.draw.rect(screen, GREY, (((width - 200) / 6 - 40 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
         pygame.draw.rect(screen, GREY, (((width - 200) / 2 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
-        pygame.draw.rect(screen, GREY, (((width - 200) / 6 * 5 - 35 + 97 * (i % 3), 240 if i > 2 else 130), (85, 85)), 4)
+        pygame.draw.rect(screen, GREY, (((width - 200) / 6 * 5 - 35 + 97 * (i % 3),
+                                         240 if i > 2 else 130), (85, 85)), 4)
     item_list_image = []
     k = 0
     for i in range(3):
         for j in range(6):
             if j < len(character_list[i].position):
-                if character_list[i].position[j].pos == -1:
-                    item_list_image.append(wand_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(wand_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 0:
-                    item_list_image.append(bow_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(bow_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 1:
-                    item_list_image.append(sword_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(sword_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 2:
-                    item_list_image.append(helmet_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(helmet_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 3:
-                    item_list_image.append(armor_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(armor_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 4:
-                    item_list_image.append(shoe_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(shoe_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 5:
-                    item_list_image.append(ring_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(ring_images, item_list_image[k])
-                elif character_list[i].position[j].pos == 6:
-                    item_list_image.append(title_images.get_rect())
-                    item_list_image[k] = item_list_image[k].move((width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140)
-                    screen.blit(title_images, item_list_image[k])
-                show_words(str(character_list[i].position[j].name), ((width - 200) / 6 + 97 * (j % 3) + i * 300, 340 if j > 2 else 230),
+                coord = (width - 200) / 6 - 25 + 97 * (j % 3) + 308 * i - (i // 2) * 8, 250 if j > 2 else 140
+                item_list_image = show_image(item_list_image, coord, str(character_list[i].position[j].pos), k)
+                show_words(str(character_list[i].position[j].name),
+                           ((width - 200) / 6 + 97 * (j % 3) + i * 300, 340 if j > 2 else 230),
                            font_small, RED)
                 k += 1
     draw_window()
@@ -729,42 +706,44 @@ while True:
                         flag = 1
                         break
                     else:
-                            screen.fill(CREAM)
-                            pygame.draw.line(screen, BLACK, (100, 450), (width - 100, 450), 4)
-                            pygame.draw.line(screen, BLACK, ((width - 200) / 3 + 100, 50),((width - 200) / 3 + 100, 650), 4)
-                            pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 100, 50),((width - 200) / 1.5 + 100, 650), 4)
-                            show_words("售出", ((width - 200) / 3 - 50, 250), font, BLACK)
-                            show_words("强化", (width / 2, 250), font, BLACK)
-                            show_words("附魔", ((width - 200) / 1.5 + 250, 250), font, BLACK)
-                            show_words("装备于" + str(character_list[0].name), ((width - 200) / 3 - 50, 550), font, BLACK)
-                            show_words("装备于" + str(character_list[1].name), (width / 2, 550), font, BLACK)
-                            show_words("装备于" + str(character_list[2].name), ((width - 200) / 1.5 + 250, 550), font, BLACK)
-                            draw_window()
-                            while True:
-                                mouse_pressed = pygame.mouse.get_pressed()
-
-                                if mouse_pressed[0] == 1:
-                                    mouse_pos = pygame.mouse.get_pos()
-                                    if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 50 < mouse_pos[1] < 450:
-                                        sale_obj(baggage, baggage.objects[chose_num], content)
-                                        refresh_lists(baggage, prop_list, drug_list, material_list)
-                                        refresh_baggage(baggage, prop_list, drug_list, material_list)
-                                        tag = 1
-                                        break
-                                    if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 450 < mouse_pos[1] < 650:
-                                        add_prop_character(character_list[0], baggage.objects[chose_num], 1)
-                                        tag = 1
-                                        break
-                                    elif (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 450 < mouse_pos[1] < 650:
-                                        add_prop_character(character_list[1], baggage.objects[chose_num], 2)
-                                        tag = 1
-                                        break
-                                    elif (width - 200) / 1.5 + 100 < mouse_pos[0] < width - 100 and 450 < mouse_pos[1] < 650:
-                                        add_prop_character(character_list[2], baggage.objects[chose_num], 3)
-                                        tag = 1
-                                        break
-                                if close_window() == 1:
+                        screen.fill(CREAM)
+                        pygame.draw.line(screen, BLACK, (100, 450), (width - 100, 450), 4)
+                        pygame.draw.line(screen, BLACK, ((width - 200) / 3 + 100, 50),
+                                         ((width - 200) / 3 + 100, 650), 4)
+                        pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 100, 50),
+                                         ((width - 200) / 1.5 + 100, 650), 4)
+                        show_words("售出", ((width - 200) / 3 - 50, 250), font, BLACK)
+                        show_words("强化", (width / 2, 250), font, BLACK)
+                        show_words("附魔", ((width - 200) / 1.5 + 250, 250), font, BLACK)
+                        show_words("装备于" + str(character_list[0].name), ((width - 200) / 3 - 50, 550), font, BLACK)
+                        show_words("装备于" + str(character_list[1].name), (width / 2, 550), font, BLACK)
+                        show_words("装备于" + str(character_list[2].name), ((width - 200) / 1.5 + 250, 550), font, BLACK)
+                        draw_window()
+                        while True:
+                            mouse_pressed = pygame.mouse.get_pressed()
+                            if mouse_pressed[0] == 1:
+                                mouse_pos = pygame.mouse.get_pos()
+                                if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 50 < mouse_pos[1] < 450:
+                                    sale_obj(baggage, baggage.objects[chose_num], content)
+                                    refresh_lists(baggage, prop_list, drug_list, material_list)
+                                    refresh_baggage(baggage, prop_list, drug_list, material_list)
+                                    tag = 1
                                     break
+                                if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 450 < mouse_pos[1] < 650:
+                                    add_prop_character(character_list[0], baggage.objects[chose_num], 1)
+                                    tag = 1
+                                    break
+                                elif (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 450 \
+                                        < mouse_pos[1] < 650:
+                                    add_prop_character(character_list[1], baggage.objects[chose_num], 2)
+                                    tag = 1
+                                    break
+                                elif (width - 200) / 1.5 + 100 < mouse_pos[0] < width - 100 and 450 < mouse_pos[1] < 650:
+                                    add_prop_character(character_list[2], baggage.objects[chose_num], 3)
+                                    tag = 1
+                                    break
+                            if close_window() == 1:
+                                break
             if tag == 1:
                 flag = 1
                 break
