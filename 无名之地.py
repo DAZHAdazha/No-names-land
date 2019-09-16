@@ -4,6 +4,7 @@ import sys
 import json
 import os
 import re
+import random
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -153,10 +154,10 @@ class Prop:
     def up_level(self, exp):
         self.exp += exp
         while self.exp >= self.need_exp:
-            self.value += 1
+            self.value += self.need_exp//2
             self.level += 1
             self.exp = self.exp - self.need_exp
-            self.need_exp *= 1.5
+            self.need_exp *= 2
             self.attack += self.grow_attack
             self.defence += self.grow_defence
             self.health += self.grow_health
@@ -213,7 +214,7 @@ class Character:
         while self.exp >= self.need_exp:
             self.level += 1
             self.exp = self.exp - self.need_exp
-            self.need_exp *= 1.5
+            self.need_exp *= 2
             self.attack += self.grow_attack
             self.defence += self.grow_defence
             self.health += self.grow_health
@@ -432,18 +433,52 @@ def remove_prop_character(character, prop):
     character.speed -= prop.speed
 
 
-def strengthen_prop(prop1, prop2):
+def strengthen_prop(prop):
     """强化装备"""
-    prop1.up_level(prop2.value)
-    if prop2.is_wear != 0:
-        remove_prop_character(character_list[prop2.is_wear], prop2)
-    for i in prop_list:
-        if i.name == prop2.name and i.numb == prop2.numb:
-            prop_list.remove(i)
+    level = prop.level
+    chance = 100 - ((level - 1) * 10)
+    if level == 10:
+        return 2  # 2 for out of range
+    if content['money'] < baggage.objects[chose_num].need_exp:
+        return 3  # 3 for lack of money
+    content['money'] -= baggage.objects[chose_num].need_exp
+    rand = random.randint(1, 100)
+    if rand <= chance:
+        prop.up_level(prop.need_exp)
+        if prop.is_wear != 0:
+            for i in character_list[prop.is_wear - 1].position:
+                if i.name == prop.name and i.numb == prop.numb:
+                    i.attack = prop.attack
+                    i.defence = prop.defence
+                    i.health = prop.health
+                    i.magic = prop.magic
+                    i.critical = prop.critical
+                    i.speed = prop.speed
+                    i.luck = prop.luck
+                    i.value = prop.value
+                    i.level = prop.level
+                    i.need_exp = prop.need_exp
+                    i.exp = prop.exp
+        for i in prop_list:
+            if i.name == prop.name and i.numb == prop.numb:
+                i.attack = prop.attack
+                i.defence = prop.defence
+                i.health = prop.health
+                i.magic = prop.magic
+                i.critical = prop.critical
+                i.speed = prop.speed
+                i.luck = prop.luck
+                i.value = prop.value
+                i.level = prop.level
+                i.need_exp = prop.need_exp
+                i.exp = prop.exp
+        refresh_baggage(baggage, prop_list, drug_list, material_list)
+        return 1  # 1 for success
+    else:
+        return 0  # 0 for fail
 
 
 def enchant_prop(prop, material):
-    """附魔装备"""
     for i in prop_list:
         if i.name == prop.name and i.numb == prop.numb:
             i.enchant_time -= 1
@@ -682,7 +717,7 @@ while True:
             if mouse_pressed[0] == 1:
                 chose_num = click_on_props()
                 if 0 <= chose_num < props_num:
-                    pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 800)),)
+                    pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 145)))
                     word_len = 0
                     obj = vars(baggage.objects[chose_num])
                     for i in obj:
@@ -729,6 +764,20 @@ while True:
                                     refresh_baggage(baggage, prop_list, drug_list, material_list)
                                     tag = 1
                                     break
+                                if (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 50 < mouse_pos[1] < 450:
+                                    streng_status = strengthen_prop(baggage.objects[chose_num])
+                                    pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 145)))
+                                    if streng_status == 1:
+                                        show_words('强化成功！', (width / 2, height - 100), font, RED)
+                                    elif streng_status == 0:
+                                        show_words('强化失败...', (width / 2, height - 100), font, RED)
+                                    elif streng_status == 2:
+                                        show_words('你的装备已经满级了！', (width / 2, height - 100), font, RED)
+                                    elif streng_status == 3:
+                                        show_words('没钱强化个毛啊！需要' + str(baggage.objects[chose_num].need_exp), (width / 2, height - 100), font, RED)
+                                    pygame.display.update()
+                                    fclock.tick(fps)
+                                    time.sleep(0.2)
                                 if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 450 < mouse_pos[1] < 650:
                                     add_prop_character(character_list[0], baggage.objects[chose_num], 1)
                                     tag = 1
