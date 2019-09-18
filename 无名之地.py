@@ -33,6 +33,15 @@ bag_image = bag_image.move(width - 120, height - 60)
 achievement_images = pygame.image.load("./image/成就.png")
 achievement_image = achievement_images.get_rect()
 achievement_image = achievement_image.move(width - 180, height - 60)
+strengthen_images = pygame.image.load("./image/强化.png")
+strengthen_image = strengthen_images.get_rect()
+strengthen_image = strengthen_image.move(width / 2 - 90, 100)
+sale_images = pygame.image.load("./image/出售.png")
+sale_image = sale_images.get_rect()
+sale_image = sale_image.move((width - 200) / 3 - 140, 100)
+enchant_images = pygame.image.load("./image/附魔.png")
+enchant_image = enchant_images.get_rect()
+enchant_image = enchant_image.move((width - 200) / 1.5 + 160, 100)
 shoe_images = pygame.image.load("./image/鞋子.png")
 sword_images = pygame.image.load("./image/剑.png")
 helmet_images = pygame.image.load("./image/头盔.png")
@@ -47,7 +56,9 @@ big_magic_images = pygame.image.load("./image/大蓝药.png")
 small_magic_images = pygame.image.load("./image/小蓝药.png")
 big_attack_images = pygame.image.load("./image/攻击药剂（大）.png")
 small_attack_images = pygame.image.load("./image/攻击药剂（小）.png")
-material_images = pygame.image.load("./image/材料.png")
+enchant_material_images = pygame.image.load("./image/附魔材料.png")
+vocational_material_images = pygame.image.load("./image/职业材料.png")
+mission_material_images = pygame.image.load("./image/任务材料.png")
 pygame.display.set_caption("无名之地")
 
 
@@ -55,7 +66,7 @@ class Material:
     def __init__(self, name):
         self.name = name
 
-    def create_new_material(self, attack, defence, health, magic, critical, speed, luck, num, value):
+    def create_new_material(self, attack, defence, health, magic, critical, speed, luck, num, value, type):
             self.attack = attack
             self.defence = defence
             self.health = health
@@ -65,50 +76,7 @@ class Material:
             self.luck = luck
             self.num = num
             self.value = value
-
-    def create_new_prop(self, attack, defence, health, magic, critical, speed, luck, grow_attack, grow_defence,
-                        grow_health, grow_magic, grow_critical, grow_speed, grow_luck, value, pos, level=1,
-                        exp=0, need_exp=10, enchant_time=5, is_wear=0, numb=1):
-        """numb 表示此装备的序列号"""
-        """-1 = 法杖， 1 = 剑， 0 = 弓箭, 2 = helmet, 3 = armor, 4 = shoes, 5 = ornament, 6 = title"""
-        #  is_wear = 0,1,2,3 0 for not wearing, 1,2,3 for character 1, 2, 3
-        self.level = level
-        self.exp = exp
-        self.need_exp = need_exp
-        self.pos = pos
-        self.enchant_time = enchant_time  # 剩余的附魔次数
-        self.grow_attack = grow_attack
-        self.grow_defence = grow_defence
-        self.grow_health = grow_health
-        self.grow_magic = grow_magic
-        self.grow_critical = grow_critical
-        self.grow_speed = grow_speed
-        self.grow_luck = grow_luck
-        self.attack = attack
-        self.defence = defence
-        self.health = health
-        self.magic = magic
-        self.critical = critical
-        self.speed = speed
-        self.luck = luck
-        self.is_wear = is_wear
-        self.value = value
-        self.numb = numb
-
-    def up_level(self, exp):
-        self.exp += exp
-        while self.exp >= self.need_exp:
-            self.value += 1
-            self.level += 1
-            self.exp = self.exp - self.need_exp
-            self.need_exp *= 1.5
-            self.attack += self.grow_attack
-            self.defence += self.grow_defence
-            self.health += self.grow_health
-            self.magic += self.grow_magic
-            self.critical += self.grow_critical
-            self.speed += self.grow_speed
-            self.luck += self.grow_luck
+            self.type = type
 
 
 class Baggage:
@@ -290,7 +258,7 @@ def make_lists(contents, props_list, drug_list, characters_list, materials_list)
     for i in contents['materials']:
         material = Material(i['name'])
         material.create_new_material(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'],
-                                     i['luck'], i['num'], i['value'])
+                                     i['luck'], i['num'], i['value'], i['type'])
         materials_list.append(material)
 
 
@@ -376,7 +344,7 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
         content['props'].append(dic)
     for i in materials_list:
         dic = {'name': i.name, 'attack': i.attack, 'defence': i.defence, 'health': i.health, 'critical': i.critical,
-               'magic': i.magic, 'speed': i.speed, 'value': i.value, 'num': i.num, 'luck': i.luck}
+               'magic': i.magic, 'speed': i.speed, 'value': i.value, 'num': i.num, 'luck': i.luck, 'type': i.type}
         content['materials'].append(dic)
 
 
@@ -545,7 +513,8 @@ def show_image(item_list_image, coord, id, num):
     dic = {'-1': wand_images, '0': bow_images, '1': sword_images, '2': helmet_images, '3': armor_images,
            '4': shoe_images, '5': ring_images, '6': title_images, '大红药': big_health_images,
            '小红药': small_health_images, '大蓝药': big_magic_images, '小蓝药': small_magic_images,
-           '小攻击药': small_attack_images, '大攻击药': big_attack_images}
+           '小攻击药': small_attack_images, '大攻击药': big_attack_images, '附魔材料':enchant_material_images,
+           '职业材料':vocational_material_images, '任务材料':mission_material_images}
     item_list_image.append(dic[id].get_rect())
     item_list_image[num] = item_list_image[num].move(coord)
     screen.blit(dic[id], item_list_image[num])
@@ -570,9 +539,7 @@ def show_object(baggage):
             item_list_image = show_image(item_list_image, coord, str(i.name), j)
         elif type(i) == Material:
             '''change into upper form'''
-            item_list_image.append(material_images.get_rect())
-            item_list_image[j] = item_list_image[j].move(j % 6 * 150 + 150, j // 6 * 150 + 70)
-            screen.blit(material_images, item_list_image[j])
+            item_list_image = show_image(item_list_image, coord, str(i.type), j)
         show_words(i.name, (j % 6 * 150 + 180, j // 6 * 150 + 150), font, BLACK)
         j += 1
     return len(item_list_image)
@@ -591,7 +558,7 @@ def click_on_props():
 def translate(word):
     translator = {'name': '名称', 'attack': '攻击', 'defence': '防御', 'health': '生命', 'magic': '魔法', 'critical': '暴击',
                   'speed': '速度', 'luck': '幸运', 'level': '等级', 'num': '数量', 'enchant_time': '可附魔次数',
-                  'value': '价格'}
+                  'value': '价格', 'type': '类型'}
     return translator[word]
 
 
@@ -747,9 +714,12 @@ while True:
                                          ((width - 200) / 3 + 100, 650), 4)
                         pygame.draw.line(screen, BLACK, ((width - 200) / 1.5 + 100, 50),
                                          ((width - 200) / 1.5 + 100, 650), 4)
-                        show_words("售出", ((width - 200) / 3 - 50, 250), font, BLACK)
-                        show_words("强化", (width / 2, 250), font, BLACK)
-                        show_words("附魔", ((width - 200) / 1.5 + 250, 250), font, BLACK)
+                        show_words("售出", ((width - 200) / 3 - 50, 350), font, BLACK)
+                        screen.blit(sale_images, sale_image)
+                        show_words("强化", (width / 2, 350), font, BLACK)
+                        screen.blit(strengthen_images, strengthen_image)
+                        show_words("附魔", ((width - 200) / 1.5 + 250, 350), font, BLACK)
+                        screen.blit(enchant_images, enchant_image)
                         show_words("装备于" + str(character_list[0].name), ((width - 200) / 3 - 50, 550), font, BLACK)
                         show_words("装备于" + str(character_list[1].name), (width / 2, 550), font, BLACK)
                         show_words("装备于" + str(character_list[2].name), ((width - 200) / 1.5 + 250, 550), font, BLACK)
@@ -764,7 +734,8 @@ while True:
                                     refresh_baggage(baggage, prop_list, drug_list, material_list)
                                     tag = 1
                                     break
-                                if (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 50 < mouse_pos[1] < 450:
+                                if (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 50 <\
+                                        mouse_pos[1] < 450:
                                     streng_status = strengthen_prop(baggage.objects[chose_num])
                                     pygame.draw.rect(screen, CREAM, ((0, height - 145), (1100, 145)))
                                     if streng_status == 1:
@@ -774,7 +745,8 @@ while True:
                                     elif streng_status == 2:
                                         show_words('你的装备已经满级了！', (width / 2, height - 100), font, RED)
                                     elif streng_status == 3:
-                                        show_words('没钱强化个毛啊！需要' + str(baggage.objects[chose_num].need_exp), (width / 2, height - 100), font, RED)
+                                        show_words('没钱强化个毛啊！需要' + str(baggage.objects[chose_num].need_exp),
+                                                   (width / 2, height - 100), font, RED)
                                     pygame.display.update()
                                     fclock.tick(fps)
                                     time.sleep(0.2)
