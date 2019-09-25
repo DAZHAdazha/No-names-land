@@ -1,3 +1,4 @@
+#coding=gbk
 import pygame
 import time
 import sys
@@ -200,6 +201,7 @@ class Character:
         self.cur_health = self.health
         self.cur_speed = self.speed
         self.cur_magic = self.magic
+        self.cur_critical = self.critical
 
 
 def load_file():
@@ -621,10 +623,97 @@ def level_choose():
         i += 1
     return -1
 
+
 def refresh_baggage(baggage, props_list, drug_list, materials_list):
     """列表载入背包"""
     baggage.objects = props_list[:] + drug_list[:] + materials_list[:]
     baggage.amount = len(baggage.objects)
+
+
+def get_cur_ability(fight_event):
+    """初始化出战人物"""
+    with open('fileSave.json', 'r', encoding='utf-8') as file_object:
+        contents = json.load(file_object)
+    for j in contents['fight_event']:
+        if j['num'] is fight_event:
+            for i in j['enemy']:
+                ch = Character(i['name'])
+                ch.create_new_character(i['attack'], i['defence'], i['health'], i['magic'], i['critical'], i['speed'],
+                                        i['luck'], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [])
+                enemy_list.append(ch)
+    for i in characters_fight_list:
+        i.character_cur_ability()
+    for i in enemy_list:
+        i.character_cur_ability()
+
+
+def judge_speed():
+    """速度排序"""
+    speed_list = []
+    for i in characters_fight_list:
+        if i.cur_health > 0:
+            speed_list.append(i)
+    for i in enemy_list:
+        if i.cur_health > 0:
+            speed_list.append(i)
+    for i in range(0, len(speed_list)-1):
+        for j in range(i+1, len(speed_list)):
+            if speed_list[i].cur_speed < speed_list[j].cur_speed:
+                speed_list[i], speed_list[j] = speed_list[j], speed_list[i]
+    return speed_list
+
+
+def character_action(character1, character2):
+    harm = character1.cur_attack - character2.cur_defence
+    if character1.cur_critical >= random.randint(1, 100):
+        print("暴击！！！")
+        harm = character1.cur_attack * 1.5 - character2.cur_defence
+    if harm <= 0:
+        harm = 0
+    character2.cur_health -= harm
+    print(character1.name + '对' + character2.name + '造成了' + str(harm) + '点伤害。')
+
+
+def character_die(character, list):
+    list.remove(character)
+
+
+def fight_end():
+    if len(characters_fight_list) is 0 or len(enemy_list) is 0:
+        return True
+    return False
+
+
+def fight_fight():
+    """虚拟战斗"""
+    """战斗主函数"""
+    while fight_end() is False:
+        """判断战斗是否结束"""
+        speed_list = judge_speed()
+        """刷新行动列表"""
+        for i in speed_list:
+            if i.cur_health > 0 and fight_end() is False:
+                if i in characters_fight_list:
+                    if len(enemy_list) > 1:
+                        character = enemy_list[random.randint(0, len(enemy_list))]
+                    else:
+                        character = enemy_list[-1]
+                    character_action(i, character)
+                    """目前只有战斗功能"""
+                    print(character.name + 'health' + str(character.cur_health))
+                    if character.cur_health <= 0:
+                        character_die(character, enemy_list)
+                        speed_list.remove(character)
+                else:
+                    if len(characters_fight_list) > 1:
+                        character = characters_fight_list[random.randint(0, len(enemy_list))]
+                    else:
+                        character = characters_fight_list[-1]
+                    character_action(i, character)
+                    print(character.name + 'health' + str(character.cur_health))
+                    if character.cur_health <= 0:
+                        character_die(character, characters_fight_list)
+                        speed_list.remove(character)
 
 
 content = load_file()
@@ -669,8 +758,12 @@ while True:
             if event.key == pygame.K_w:
                 map_y_velocity = 0
             if event.key == pygame.K_SPACE and level_choice is not -1:
-                print(level_choice)
-
+                print(int(level_choice))
+                characters_fight_list = character_list
+                enemy_list = []
+                get_cur_ability(level_choice)
+                fight_fight()
+                print(int(level_choice))
     mouse_pos = pygame.mouse.get_pos()
     mouse_pressed = pygame.mouse.get_pressed()
     '''return tuple object, which [0] represent left key, [1] for middle, [2] for right'''
