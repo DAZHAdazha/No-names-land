@@ -1,4 +1,3 @@
-#coding=gbk
 import pygame
 import time
 import sys
@@ -6,7 +5,7 @@ import json
 import os
 import re
 import random
-
+#鼠标抬起
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 RED = 255, 0, 0
@@ -740,26 +739,26 @@ while True:
             down_file(content)
             sys.exit()
         elif event.type == pygame.KEYDOWN:  # event of press the key
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_RIGHT:
                 map_x_velocity = 2
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_DOWN:
                 map_y_velocity = 2
-            if event.key == pygame.K_a:
+            if event.key == pygame.K_LEFT:
                 map_x_velocity = -2
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_UP:
                 map_y_velocity = -2
         elif event.type == pygame.KEYUP:  # event of release the key
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_RIGHT:
                 map_x_velocity = 0
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_DOWN:
                 map_y_velocity = 0
-            if event.key == pygame.K_a:
+            if event.key == pygame.K_LEFT:
                 map_x_velocity = 0
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_UP:
                 map_y_velocity = 0
             if event.key == pygame.K_SPACE and level_choice is not -1:
                 print(int(level_choice))
-                characters_fight_list = character_list
+                characters_fight_list = character_list[:]
                 enemy_list = []
                 get_cur_ability(level_choice)
                 fight_fight()
