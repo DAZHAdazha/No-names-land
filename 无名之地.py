@@ -11,6 +11,7 @@ WHITE = 255, 255, 255
 RED = 255, 0, 0
 GREY = 128, 128, 128
 CREAM = 230, 230, 230
+YELLOW = 255,255,0
 size = width, height = 1100, 800  # size of the window
 fps = 300  # frames per second for game
 path = os.getcwd()
@@ -606,6 +607,20 @@ def draw_character():
     draw_window()
 
 
+def draw_map():
+    for point in point_list:
+        pygame.draw.circle(screen, YELLOW, point, 15, 4)
+
+
+def level_choose():
+    i = 0
+    for point in point_list:
+        if point[0] - 25 < map_choice[0] < point[0] + 25 and point[1] - 25 < map_choice[1] < point[1] + 25:
+            pygame.draw.circle(screen, RED, point, 15, 4)
+            return i
+        i += 1
+    return -1
+
 def refresh_baggage(baggage, props_list, drug_list, materials_list):
     """列表载入背包"""
     baggage.objects = props_list[:] + drug_list[:] + materials_list[:]
@@ -625,6 +640,8 @@ map_choice = [20, height - 20]
 map_x_velocity = 0
 map_y_velocity = 0
 flag = 0
+point_list = [(100, 200), [200, 100], [300, 400], [500, 400]]
+level_choice = -1
 
 while True:
     screen.fill(CREAM)
@@ -651,6 +668,9 @@ while True:
                 map_x_velocity = 0
             if event.key == pygame.K_w:
                 map_y_velocity = 0
+            if event.key == pygame.K_SPACE and level_choice is not -1:
+                print(level_choice)
+
     mouse_pos = pygame.mouse.get_pos()
     mouse_pressed = pygame.mouse.get_pressed()
     '''return tuple object, which [0] represent left key, [1] for middle, [2] for right'''
@@ -784,5 +804,7 @@ while True:
     screen.blit(character_images, character_image)
     screen.blit(bag_images, bag_image)
     screen.blit(achievement_images, achievement_image)
+    draw_map()
+    level_choice = level_choose()
     pygame.display.update()
     fclock.tick(fps)
