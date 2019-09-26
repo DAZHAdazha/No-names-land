@@ -5,13 +5,12 @@ import json
 import os
 import re
 import random
-#鼠标抬起
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 RED = 255, 0, 0
 GREY = 128, 128, 128
 CREAM = 230, 230, 230
-YELLOW = 255,255,0
+YELLOW = 255, 255, 0
 size = width, height = 1100, 800  # size of the window
 fps = 300  # frames per second for game
 path = os.getcwd()
@@ -68,16 +67,16 @@ class Material:
         self.name = name
 
     def create_new_material(self, attack, defence, health, magic, critical, speed, luck, num, value, type):
-            self.attack = attack
-            self.defence = defence
-            self.health = health
-            self.magic = magic
-            self.critical = critical
-            self.speed = speed
-            self.luck = luck
-            self.num = num
-            self.value = value
-            self.type = type
+        self.attack = attack
+        self.defence = defence
+        self.health = health
+        self.magic = magic
+        self.critical = critical
+        self.speed = speed
+        self.luck = luck
+        self.num = num
+        self.value = value
+        self.type = type
 
 
 class Baggage:
@@ -241,10 +240,10 @@ def make_lists(contents, props_list, drug_list, characters_list, materials_list)
                                  i['grow_speed'], i['grow_luck'], i['value'], i['pos'], i['level'], i['exp'],
                                  i['need_exp'], i['enchant_time'], i['is_wear'], i['numb'])
             ch_prop.append(prop)
-        ch.create_new_character(j['attack'], j['defence'], j['health'], j['magic'], j['critical'], j['speed'], j['luck'],
-                                j['insight'], j['grow_attack'], j['grow_defence'], j['grow_health'], j['grow_magic'],
-                                j['grow_critical'], j['grow_speed'], j['grow_luck'], j['grow_insight'], j['level'],
-                                j['exp'], j['need_exp'], ch_prop)
+        ch.create_new_character(j['attack'], j['defence'], j['health'], j['magic'], j['critical'], j['speed'],
+                                j['luck'], j['insight'], j['grow_attack'], j['grow_defence'], j['grow_health'],
+                                j['grow_magic'], j['grow_critical'], j['grow_speed'], j['grow_luck'], j['grow_insight'],
+                                j['level'], j['exp'], j['need_exp'], ch_prop)
         characters_list.append(ch)
     for i in contents['props']:
         prop = Prop(i['name'])
@@ -323,12 +322,12 @@ def refresh_content(contents, characters_list, props_list, drug_list, materials_
                'grow_luck': i.grow_luck, 'grow_insight': i.grow_insight, 'position': i.position}
         prop_dic = []
         for j in dic['position']:
-            prop= {'name': j.name, 'attack': j.attack, 'defence': j.defence, 'health': j.health, 'magic': j.magic,
-                        'critical': j.critical, 'speed': j.speed, 'luck': j.luck, 'level': j.level,'exp': j.exp,
-                        'need_exp': j.need_exp, 'grow_attack': j.grow_attack, 'grow_defence': j.grow_defence,
-                        'grow_health': j.grow_health, 'grow_magic': j.grow_magic, 'grow_critical': j.grow_critical,
-                        'grow_speed': j.grow_speed, 'grow_luck': j.grow_luck, 'pos': j.pos, 'value': j.value,
-                        'is_wear': j.is_wear, 'enchant_time': j.enchant_time, 'numb': j.numb}
+            prop = {'name': j.name, 'attack': j.attack, 'defence': j.defence, 'health': j.health, 'magic': j.magic,
+                    'critical': j.critical, 'speed': j.speed, 'luck': j.luck, 'level': j.level,'exp': j.exp,
+                    'need_exp': j.need_exp, 'grow_attack': j.grow_attack, 'grow_defence': j.grow_defence,
+                    'grow_health': j.grow_health, 'grow_magic': j.grow_magic, 'grow_critical': j.grow_critical,
+                    'grow_speed': j.grow_speed, 'grow_luck': j.grow_luck, 'pos': j.pos, 'value': j.value,
+                    'is_wear': j.is_wear, 'enchant_time': j.enchant_time, 'numb': j.numb}
             prop_dic.append(prop)
         dic['position'] = prop_dic
         content['characters'].append(dic)
@@ -515,8 +514,8 @@ def show_image(item_list_image, coord, id, num):
     dic = {'-1': wand_images, '0': bow_images, '1': sword_images, '2': helmet_images, '3': armor_images,
            '4': shoe_images, '5': ring_images, '6': title_images, '大红药': big_health_images,
            '小红药': small_health_images, '大蓝药': big_magic_images, '小蓝药': small_magic_images,
-           '小攻击药': small_attack_images, '大攻击药': big_attack_images, '附魔材料':enchant_material_images,
-           '职业材料':vocational_material_images, '任务材料':mission_material_images}
+           '小攻击药': small_attack_images, '大攻击药': big_attack_images, '附魔材料': enchant_material_images,
+           '职业材料': vocational_material_images, '任务材料': mission_material_images}
     item_list_image.append(dic[id].get_rect())
     item_list_image[num] = item_list_image[num].move(coord)
     screen.blit(dic[id], item_list_image[num])
@@ -548,13 +547,13 @@ def show_object(baggage):
 
 
 def click_on_props():
-        mouse_pos = pygame.mouse.get_pos()
-        for i in range(4):
-            if 100 < mouse_pos[0] < width - 100 and 50 + i * 150 < mouse_pos[1] < 200 + i * 150:
-                for j in range(6):
-                    if 100 + j * 150 < mouse_pos[0] < 250 + j * 150:
-                        return i * 6 + j
-        return -1
+    mouse_pos = pygame.mouse.get_pos()
+    for i in range(4):
+        if 100 < mouse_pos[0] < width - 100 and 50 + i * 150 < mouse_pos[1] < 200 + i * 150:
+            for j in range(6):
+                if 100 + j * 150 < mouse_pos[0] < 250 + j * 150:
+                    return i * 6 + j
+    return -1
 
 
 def translate(word):
@@ -663,10 +662,11 @@ def judge_speed():
 
 
 def character_action(character1, character2):
-    harm = character1.cur_attack - character2.cur_defence
+    harm = round(0.8 * character1.cur_attack - character2.cur_defence) + round(0.2 * character1.cur_attack)\
+        if character1.cur_attack > character2.cur_defence else round(0.2 * character1.cur_attack)
     if character1.cur_critical >= random.randint(1, 100):
         print("暴击！！！")
-        harm = character1.cur_attack * 1.5 - character2.cur_defence
+        harm = round(character1.cur_attack * 1.5) - character2.cur_defence
     if harm <= 0:
         harm = 0
     character2.cur_health -= harm
@@ -684,8 +684,8 @@ def fight_end():
 
 
 def fight_fight():
-    """虚拟战斗"""
-    """战斗主函数"""
+    """虚拟战斗
+      战斗主函数"""
     while fight_end() is False:
         """判断战斗是否结束"""
         speed_list = judge_speed()
