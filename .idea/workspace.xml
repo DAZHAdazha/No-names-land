@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="81703da7-8065-4880-bd7c-05f66f30deb8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/无名之地.py" beforeDir="false" afterPath="$PROJECT_DIR$/无名之地.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fileSave.json" beforeDir="false" afterPath="$PROJECT_DIR$/fileSave.json" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,22 +22,15 @@
   </component>
   <component name="ProjectId" id="1QHL9A01Xtf1aZwlIP5dQtx61xs" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Python.无名之地">
     <configuration name="无名之地" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -112,6 +104,18 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -137,5 +141,23 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1899" height="280" key="GridCell.Tab.0.bottom" timestamp="1582991059448">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="280" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1582991059448" />
+    <state width="1899" height="280" key="GridCell.Tab.0.center" timestamp="1582991059437">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="280" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1582991059437" />
+    <state width="1899" height="280" key="GridCell.Tab.0.left" timestamp="1582991059419">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="280" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1582991059419" />
+    <state width="1899" height="280" key="GridCell.Tab.0.right" timestamp="1582991059442">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="280" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1582991059442" />
   </component>
 </project>
